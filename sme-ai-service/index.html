@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>よりそいAI | IT・AIが苦手な中小企業のためのAI活用伴走サービス</title>
+<meta name="description" content="「うちには関係ない」と思っていたAIを、明日から使える一歩に。ITに詳しい担当者がいなくても、業務にあったAI活用を導入から定着まで伴走します。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --mist:#F5F7F5;
+    --ink:#1B2B3A;
+    --ink-soft:#3F5164;
+    --indigo:#24506B;
+    --indigo-deep:#16324A;
+    --gold:#B8862E;
+    --gold-deep:#8F6A20;
+    --line:#E1E6E2;
+
+    --font-display:'Shippori Mincho', serif;
+    --font-body:'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+
+    --content-w:760px;
+    --wide-w:1080px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:19px;
+    line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  img,svg{max-width:100%;display:block;}
+
+  a{color:var(--indigo);}
+  a:focus-visible,
+  button:focus-visible{
+    outline:3px solid var(--gold);
+    outline-offset:3px;
+  }
+
+  h1,h2,h3{
+    font-family:var(--font-display);
+    color:var(--indigo-deep);
+    line-height:1.4;
+    text-wrap:balance;
+    margin:0;
+    font-weight:700;
+  }
+
+  .wrap{
+    max-width:var(--content-w);
+    margin:0 auto;
+    padding:0 24px;
+  }
+  .wrap--wide{ max-width:var(--wide-w); }
+
+  .eyebrow{
+    display:block;
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.14em;
+    color:var(--gold-deep);
+    margin-bottom:14px;
+  }
+
+  .section{
+    padding:88px 0;
+    border-top:1px solid var(--line);
+  }
+  .section--mist{ background:var(--mist); }
+  .section--first{ border-top:none; }
+
+  .section-head{
+    max-width:var(--content-w);
+    margin:0 auto 48px;
+    padding:0 24px;
+    text-align:center;
+  }
+  .section-head h2{ font-size:clamp(26px, 3.6vw, 34px); }
+  .section-head p{ margin-top:18px; color:var(--ink-soft); }
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    max-width:var(--wide-w);
+    margin:0 auto;
+    padding:16px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .brand{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:22px;
+    color:var(--indigo-deep);
+    text-decoration:none;
+    letter-spacing:0.02em;
+  }
+  .nav-links{
+    display:flex;
+    gap:28px;
+    list-style:none;
+    margin:0; padding:0;
+    font-size:16px;
+  }
+  .nav-links a{ color:var(--ink); text-decoration:none; }
+  .nav-links a:hover{ color:var(--indigo); }
+  .nav-cta{
+    display:inline-block;
+    white-space:nowrap;
+    background:var(--indigo);
+    color:#fff;
+    padding:11px 22px;
+    border-radius:4px;
+    text-decoration:none;
+    font-weight:700;
+    font-size:15px;
+  }
+  .nav-cta:hover{ background:var(--indigo-deep); }
+
+  @media (max-width:860px){
+    .nav-links{ display:none; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:96px 0 80px;
+  }
+  .hero .wrap{ max-width:var(--wide-w); }
+  .hero-inner{
+    max-width:820px;
+    margin:0 auto;
+    text-align:center;
+  }
+  .hero h1{
+    font-size:clamp(30px, 5vw, 46px);
+    margin-top:16px;
+  }
+  .hero .lead{
+    margin-top:26px;
+    font-size:20px;
+    color:var(--ink-soft);
+    max-width:640px;
+    margin-left:auto; margin-right:auto;
+  }
+  .cta-row{
+    margin-top:38px;
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-block;
+    padding:16px 32px;
+    border-radius:4px;
+    text-decoration:none;
+    font-weight:700;
+    font-size:17px;
+    border:1px solid transparent;
+  }
+  .btn-primary{ background:var(--gold); color:#fff; }
+  .btn-primary:hover{ background:var(--gold-deep); }
+  .btn-secondary{ background:transparent; color:var(--indigo); border-color:var(--indigo); }
+  .btn-secondary:hover{ background:var(--indigo); color:#fff; }
+  .reassure{
+    margin-top:22px;
+    font-size:15px;
+    color:var(--ink-soft);
+  }
+  .reassure::before{
+    content:"";
+  }
+
+  /* ---------- Cards (課題 / できること / 選ばれる理由) ---------- */
+  .grid{
+    display:grid;
+    gap:28px;
+    grid-template-columns:repeat(2, 1fr);
+  }
+  @media (max-width:700px){ .grid{ grid-template-columns:1fr; } }
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:32px;
+  }
+  .section--mist .card{ background:var(--paper); }
+  .card h3{
+    font-size:20px;
+    margin-bottom:12px;
+    color:var(--indigo-deep);
+  }
+  .card p{
+    margin:0;
+    color:var(--ink-soft);
+    font-size:17px;
+  }
+
+  /* ---------- Process (唯一の連番) ---------- */
+  .process-list{
+    max-width:var(--content-w);
+    margin:0 auto;
+    padding:0 24px;
+    list-style:none;
+  }
+  .process-item{
+    display:flex;
+    gap:26px;
+    padding:30px 0;
+    border-top:1px solid var(--line);
+  }
+  .process-item:first-child{ border-top:none; }
+  .process-num{
+    font-family:var(--font-display);
+    font-size:34px;
+    color:var(--gold);
+    line-height:1.2;
+    min-width:56px;
+  }
+  .process-body h3{ font-size:19px; margin-bottom:8px; }
+  .process-body p{ margin:0; color:var(--ink-soft); font-size:17px; }
+
+  /* ---------- Pricing ---------- */
+  .price-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:24px;
+    max-width:var(--wide-w);
+    margin:0 auto;
+    padding:0 24px;
+  }
+  @media (max-width:900px){ .price-grid{ grid-template-columns:1fr; } }
+  .price-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:34px 30px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    position:relative;
+  }
+  .price-card--featured{
+    border-color:var(--gold);
+    box-shadow:0 0 0 1px var(--gold);
+  }
+  .price-badge{
+    position:absolute;
+    top:-14px; left:30px;
+    background:var(--gold);
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+    padding:5px 14px;
+    border-radius:999px;
+  }
+  .price-name{ font-family:var(--font-display); font-size:21px; color:var(--indigo-deep); }
+  .price-amount{ font-size:28px; font-weight:700; color:var(--ink); }
+  .price-amount small{ font-size:15px; font-weight:400; color:var(--ink-soft); }
+  .price-target{ font-size:15px; color:var(--ink-soft); }
+  .price-features{
+    margin:0; padding:0; list-style:none;
+    display:flex; flex-direction:column; gap:10px;
+    font-size:16px;
+    border-top:1px solid var(--line);
+    padding-top:16px;
+  }
+  .price-note{
+    max-width:var(--content-w);
+    margin:32px auto 0;
+    padding:0 24px;
+    text-align:center;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- Testimonials ---------- */
+  .quote-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:24px;
+    max-width:var(--wide-w);
+    margin:0 auto;
+    padding:0 24px;
+  }
+  @media (max-width:900px){ .quote-grid{ grid-template-columns:1fr; } }
+  .quote-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:30px;
+  }
+  .quote-card p.quote-text{
+    margin:0 0 20px;
+    font-size:17px;
+    color:var(--ink);
+  }
+  .quote-meta{
+    font-size:14px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+  .sample-note{
+    max-width:var(--content-w);
+    margin:20px auto 0;
+    padding:0 24px;
+    font-size:13px;
+    color:var(--ink-soft);
+    text-align:center;
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq-list{
+    max-width:var(--content-w);
+    margin:0 auto;
+    padding:0 24px;
+  }
+  details{
+    border-top:1px solid var(--line);
+    padding:22px 0;
+  }
+  details:last-child{ border-bottom:1px solid var(--line); }
+  summary{
+    cursor:pointer;
+    font-weight:700;
+    font-size:18px;
+    color:var(--indigo-deep);
+    list-style:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+  }
+  summary::-webkit-details-marker{ display:none; }
+  summary::after{
+    content:"+";
+    font-family:var(--font-display);
+    font-size:24px;
+    color:var(--gold);
+    flex-shrink:0;
+  }
+  details[open] summary::after{ content:"−"; }
+  details p{
+    margin:16px 0 0;
+    color:var(--ink-soft);
+    font-size:17px;
+  }
+
+  /* ---------- Final CTA ---------- */
+  .final-cta{
+    text-align:center;
+    padding:96px 0;
+    background:var(--indigo-deep);
+    color:#fff;
+    border-top:none;
+  }
+  .final-cta h2{ color:#fff; font-size:clamp(26px,3.8vw,34px); }
+  .final-cta p{ color:#D9E2E8; margin-top:16px; font-size:18px; }
+  .final-cta .cta-row .btn-secondary{
+    color:#fff; border-color:#fff;
+  }
+  .final-cta .cta-row .btn-secondary:hover{
+    background:#fff; color:var(--indigo-deep);
+  }
+  .final-cta .phone{
+    margin-top:26px;
+    font-size:15px;
+    color:#B9C7CF;
+  }
+  .final-cta .phone strong{
+    color:#fff;
+    font-size:18px;
+    font-family:var(--font-display);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    background:var(--ink);
+    color:#B9C3CB;
+    padding:56px 0 32px;
+    font-size:14px;
+  }
+  .footer-inner{
+    max-width:var(--wide-w);
+    margin:0 auto;
+    padding:0 24px;
+    display:flex;
+    justify-content:space-between;
+    gap:32px;
+    flex-wrap:wrap;
+  }
+  .footer-brand{
+    font-family:var(--font-display);
+    color:#fff;
+    font-size:19px;
+  }
+  .footer-links{
+    list-style:none;
+    display:flex;
+    gap:24px;
+    padding:0; margin:0;
+    flex-wrap:wrap;
+  }
+  .footer-links a{ color:#B9C3CB; text-decoration:none; }
+  .footer-links a:hover{ color:#fff; }
+  .footer-bottom{
+    max-width:var(--wide-w);
+    margin:40px auto 0;
+    padding:20px 24px 0;
+    border-top:1px solid #33404A;
+    color:#7C8B94;
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== 1. ヘッダー ========== -->
+<header>
+  <nav class="nav">
+    <a class="brand" href="#top">よりそいAI</a>
+    <ul class="nav-links">
+      <li><a href="#service">サービス</a></li>
+      <li><a href="#reason">選ばれる理由</a></li>
+      <li><a href="#flow">導入の流れ</a></li>
+      <li><a href="#price">料金</a></li>
+      <li><a href="#voice">お客様の声</a></li>
+      <li><a href="#faq">よくある質問</a></li>
+    </ul>
+    <a class="nav-cta" href="#cta">無料相談を予約する</a>
+  </nav>
+</header>
+
+<!-- ========== 2. ヒーロー ========== -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-inner">
+      <span class="eyebrow">中小企業のためのAI活用伴走サービス</span>
+      <h1>「うちには関係ない」と思っていたAIを、<br>明日から使える一歩に。</h1>
+      <p class="lead">
+        パソコンが得意な社員がいなくても大丈夫です。何から手をつければいいか分からない中小企業に寄り添い、
+        日々の業務に合ったAI活用を、導入から定着まで一緒に進めます。
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#cta">無料相談を予約する</a>
+        <a class="btn btn-secondary" href="#service">できることを見る</a>
+      </div>
+      <p class="reassure">契約前のご相談は何度でも無料です。ITに詳しい担当者がいなくても始められます。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 3. 課題共感 ========== -->
+<section class="section section--mist" id="pain">
+  <div class="section-head">
+    <span class="eyebrow">こんなお悩み、ありませんか</span>
+    <h2>AI活用でつまずく理由は、技術ではなく「最初の一歩」です</h2>
+  </div>
+  <div class="wrap wrap--wide grid">
+    <div class="card">
+      <h3>何から始めればいいか分からない</h3>
+      <p>「AIを使えばいい」と言われても、自社の何に使えるのか見当がつかない。</p>
+    </div>
+    <div class="card">
+      <h3>教えてくれる人が社内にいない</h3>
+      <p>IT担当は他の業務と兼任。専門用語だらけの説明では続かない。</p>
+    </div>
+    <div class="card">
+      <h3>費用対効果が見えない</h3>
+      <p>高いツールを導入しても、結局使われずに終わるのではと不安。</p>
+    </div>
+    <div class="card">
+      <h3>セキュリティが心配</h3>
+      <p>顧客情報や社外秘の情報を扱うため、安易に導入に踏み切れない。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 4. できること ========== -->
+<section class="section" id="service">
+  <div class="section-head">
+    <span class="eyebrow">よりそいAIができること</span>
+    <h2>御社の業務に合わせて、使うAIを一緒に選びます</h2>
+    <p>ツールを売って終わりにはしません。業務の棚卸しから定着まで、伴走します。</p>
+  </div>
+  <div class="wrap wrap--wide grid">
+    <div class="card">
+      <h3>業務の棚卸しとAI活用診断</h3>
+      <p>まずは日々の業務を一緒に洗い出し、AIで負担を減らせる工程を診断します。</p>
+    </div>
+    <div class="card">
+      <h3>使えるAIツールの選定と初期設定</h3>
+      <p>数ある生成AIツールの中から、御社の業務・予算に合ったものを選び、初期設定まで代行します。</p>
+    </div>
+    <div class="card">
+      <h3>現場での使い方研修</h3>
+      <p>マニュアルを渡すだけでなく、実際の業務データを使いながら、現場の社員が迷わず使えるまで伴走します。</p>
+    </div>
+    <div class="card">
+      <h3>導入後の定着サポート</h3>
+      <p>導入して終わりではなく、月次の振り返りと改善提案で、使われ続ける仕組みをつくります。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 5. 選ばれる理由 ========== -->
+<section class="section section--mist" id="reason">
+  <div class="section-head">
+    <span class="eyebrow">よりそいAIが選ばれる理由</span>
+    <h2>専門用語を使わず、現場の言葉で伴走します</h2>
+  </div>
+  <div class="wrap wrap--wide grid">
+    <div class="card">
+      <h3>IT未経験の社員にも伝わる説明</h3>
+      <p>「クラウド」「API」といった言葉を使わず、日常業務の言葉に置き換えて説明します。</p>
+    </div>
+    <div class="card">
+      <h3>長期契約なしの月単位契約</h3>
+      <p>効果を感じられなければ、翌月から解約できます。無理な売り込みは行いません。</p>
+    </div>
+    <div class="card">
+      <h3>製造業・小売業・士業など幅広い実績</h3>
+      <p>業種特有の業務フローを理解した上で、現実的な使い方をご提案します。</p>
+    </div>
+    <div class="card">
+      <h3>初回相談から専任担当が一貫サポート</h3>
+      <p>窓口担当が変わらないため、同じ話を何度も説明していただく必要がありません。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 6. 導入の流れ（唯一の連番使用箇所） ========== -->
+<section class="section" id="flow">
+  <div class="section-head">
+    <span class="eyebrow">ご契約までの流れ</span>
+    <h2>最初のご相談から、実際に使い始めるまで</h2>
+  </div>
+  <ol class="process-list">
+    <li class="process-item">
+      <span class="process-num">01</span>
+      <div class="process-body">
+        <h3>無料相談（60分）</h3>
+        <p>現在の業務内容やお悩みをヒアリングします。この段階での営業目的の売り込みは行いません。</p>
+      </div>
+    </li>
+    <li class="process-item">
+      <span class="process-num">02</span>
+      <div class="process-body">
+        <h3>AI活用診断・ご提案</h3>
+        <p>業務内容をもとに、活用できそうな範囲と概算費用をまとめた診断レポートをお渡しします。</p>
+      </div>
+    </li>
+    <li class="process-item">
+      <span class="process-num">03</span>
+      <div class="process-body">
+        <h3>ツール導入・初期設定</h3>
+        <p>ご契約後、選定したツールの契約手続きと初期設定を代行します。</p>
+      </div>
+    </li>
+    <li class="process-item">
+      <span class="process-num">04</span>
+      <div class="process-body">
+        <h3>研修・伴走開始</h3>
+        <p>現場での使い方を研修し、以降は月次サポートで定着まで伴走します。</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- ========== 7. 料金プラン ========== -->
+<section class="section section--mist" id="price">
+  <div class="section-head">
+    <span class="eyebrow">料金プラン</span>
+    <h2>御社の規模に合わせて、無理のない範囲から</h2>
+  </div>
+  <div class="price-grid">
+    <div class="price-card">
+      <div class="price-name">スモールスタート</div>
+      <div class="price-amount">月額 49,000円<small>〜（税別）</small></div>
+      <div class="price-target">対象目安：従業員10名以下</div>
+      <ul class="price-features">
+        <li>月1回の定例伴走ミーティング</li>
+        <li>チャットでの相談し放題</li>
+        <li>AI活用診断レポート</li>
+      </ul>
+    </div>
+    <div class="price-card price-card--featured">
+      <span class="price-badge">人気</span>
+      <div class="price-name">スタンダード</div>
+      <div class="price-amount">月額 98,000円<small>〜（税別）</small></div>
+      <div class="price-target">対象目安：従業員11〜50名</div>
+      <ul class="price-features">
+        <li>月2回の定例伴走ミーティング</li>
+        <li>ツール初期設定込み</li>
+        <li>現場研修 1回込み</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="price-name">フルサポート</div>
+      <div class="price-amount">個別お見積り</div>
+      <div class="price-target">対象目安：従業員51名以上・複数部署</div>
+      <ul class="price-features">
+        <li>部署ごとの個別診断</li>
+        <li>継続研修プログラム</li>
+        <li>専任担当による伴走</li>
+      </ul>
+    </div>
+  </div>
+  <p class="price-note">表示価格はすべて税別です。契約期間の縛りはなく、翌月から解約いただけます。</p>
+</section>
+
+<!-- ========== 8. お客様の声 ========== -->
+<section class="section" id="voice">
+  <div class="section-head">
+    <span class="eyebrow">お客様の声</span>
+    <h2>導入いただいた企業様から届いた声</h2>
+  </div>
+  <div class="quote-grid">
+    <div class="quote-card">
+      <p class="quote-text">「見積書の作成に毎回2時間かかっていましたが、AIに下書きを任せられるようになり、30分程度で終わるようになりました。専門用語を使わない説明のおかげで、パソコンが苦手な現場のベテラン社員も抵抗なく使えています。」</p>
+      <div class="quote-meta">製造業・従業員18名／総務担当</div>
+    </div>
+    <div class="quote-card">
+      <p class="quote-text">「セキュリティ面が一番の不安でしたが、導入前に社外秘情報の扱い方まで一緒にルール化してもらえたので安心して使い始められました。」</p>
+      <div class="quote-meta">士業事務所・従業員6名／代表</div>
+    </div>
+    <div class="quote-card">
+      <p class="quote-text">「値段だけで選んだツールが結局誰にも使われなかった経験があります。今回は現場研修まで付き合ってもらえたので、ようやく定着しました。」</p>
+      <div class="quote-meta">小売業・従業員32名／店舗運営責任者</div>
+    </div>
+  </div>
+  <p class="sample-note">※ 掲載事例はサービス内容をご紹介するためのサンプルです。</p>
+</section>
+
+<!-- ========== 9. よくある質問 ========== -->
+<section class="section section--mist" id="faq">
+  <div class="section-head">
+    <span class="eyebrow">よくある質問</span>
+    <h2>ご相談前に気になること</h2>
+  </div>
+  <div class="faq-list">
+    <details>
+      <summary>パソコンの操作に自信がなくても大丈夫ですか？</summary>
+      <p>はい。ご利用中のお客様の多くが、AIツールを使うのは今回が初めてです。専門用語を使わず、普段の業務の言葉で説明しますのでご安心ください。</p>
+    </details>
+    <details>
+      <summary>セキュリティは大丈夫ですか？</summary>
+      <p>ご提案するAIツールは法人利用向けにセキュリティ要件を確認した上で選定し、社外秘情報の扱い方についても導入時に一緒にルールを決めていきます。</p>
+    </details>
+    <details>
+      <summary>途中で解約できますか？</summary>
+      <p>月単位の契約のため、翌月から解約いただけます。違約金などは発生しません。</p>
+    </details>
+    <details>
+      <summary>どんな業種でも対応できますか？</summary>
+      <p>製造業・小売業・士業・飲食業など、幅広い業種でのご支援実績があります。まずは無料相談で業務内容をお聞かせください。</p>
+    </details>
+  </div>
+</section>
+
+<!-- ========== 10. 最終CTA ========== -->
+<section class="final-cta" id="cta">
+  <div class="wrap">
+    <h2>まずは、無料相談から始めませんか</h2>
+    <p>「うちの会社でAIが役立つのか」だけでも構いません。60分、じっくりお話をお聞かせください。</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#top">無料相談を予約する</a>
+      <a class="btn btn-secondary" href="#service">サービス資料を見る</a>
+    </div>
+    <p class="phone">お電話でのお問い合わせも可能です　<strong>0120-XXX-XXX</strong>（平日 9:00〜18:00）</p>
+  </div>
+</section>
+
+<!-- ========== 11. フッター ========== -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">よりそいAI</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="#service">サービス</a></li>
+      <li><a href="#reason">選ばれる理由</a></li>
+      <li><a href="#flow">導入の流れ</a></li>
+      <li><a href="#price">料金</a></li>
+      <li><a href="#voice">お客様の声</a></li>
+      <li><a href="#faq">よくある質問</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-inner" style="margin:0; padding:0;">
+      <span>© 2026 よりそいAI</span>
+      <span>本サイトはサンプルコンテンツを含みます。実際の運用前に会社情報・事例・料金を差し替えてください。</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
