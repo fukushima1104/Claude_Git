@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    /* OS のフォントサイズ設定を尊重する */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-canvas text-ink-900 font-sans text-base tracking-ja antialiased;
+  }
+
+  /* キーボード操作時のフォーカスを、全要素で必ず見えるようにする */
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-primary-700;
+  }
+
+  /* 見出しは太くしすぎない(700 は硬く感じるため 600 まで) */
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-semibold text-ink-900;
+  }
+
+  ::selection {
+    @apply bg-primary-100;
+  }
+}
+
+@layer utilities {
+  /* スクリーンリーダー専用テキスト */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .num {
+    font-family: Inter, 'Noto Sans JP', system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* 「動きを減らす」設定を尊重する */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
