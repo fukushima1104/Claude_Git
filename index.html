@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>研修振り返りコーチ（音声・カメラ版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: 上部ナビ＋1カラムの作業面。面談中だけ「ステージ（録画される画面）＋対話ログ」の2カラム。 */
+:root{
+  --bg:#f2f5f6; --surface:#ffffff; --sunk:#e8eef1; --fg:#14263a; --muted:#566879; --line:#d6dee4;
+  --ai:#22466f; --ai-soft:#e3ebf5; --accent:#2c8a64; --accent-soft:#dff1e8; --rec:#c43c2c; --warn:#a86a0b;
+  --f-display:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;
+  --f-body:"Noto Sans JP","Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0e151e; --surface:#16202b; --sunk:#1c2834; --fg:#e4ebf1; --muted:#97a6b5; --line:#2a3745;
+  --ai:#93b7e3; --ai-soft:#1d2d42; --accent:#5ec89b; --accent-soft:#173326; --rec:#f07264; --warn:#e2a64a; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg);margin:0}
+body{font-family:var(--f-body);font-size:15px;line-height:1.7;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);line-height:1.35;text-wrap:balance;margin:0}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
+[hidden]{display:none!important}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:18px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:34px;height:34px;border-radius:50%;background:var(--ai);display:grid;place-items:center;color:var(--surface);font-family:var(--f-display);font-weight:900;font-size:16px}
+.brand b{font-family:var(--f-display);font-size:18px;font-weight:900;letter-spacing:.02em}
+.brand small{display:block;color:var(--muted);font-size:12px;line-height:1.2}
+.nav{display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:500;font-size:14px;white-space:nowrap;text-decoration:none;color:var(--fg)}
+.btn:hover{border-color:var(--ai)}
+.btn.primary{background:var(--ai);border-color:var(--ai);color:var(--surface)}
+.btn.go{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.danger{color:var(--rec);border-color:var(--rec)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:transparent}
+
+.head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.head-row h1{font-size:26px}
+.sub{color:var(--muted);font-size:13px;margin:4px 0 0}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:24px;color:var(--muted);font-size:13px}
+.stats b{display:block;font-family:var(--f-display);font-size:26px;color:var(--fg);font-variant-numeric:tabular-nums;line-height:1.2}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;cursor:pointer;display:flex;flex-direction:column;gap:8px;text-align:left;min-width:0}
+.card:hover{border-color:var(--ai)}
+.card .meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.card h3{font-size:17px}
+.card .goal{font-size:13px;background:var(--accent-soft);border-radius:6px;padding:8px 10px;line-height:1.6}
+.card .goal span{display:block;font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.06em}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
+.chip.ok{border-color:var(--accent);color:var(--accent)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);padding:32px 24px}
+.empty h2{font-size:20px;margin-bottom:6px}
+.flow{list-style:none;padding:0;margin:22px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;counter-reset:f}
+.flow li{counter-increment:f;background:var(--sunk);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--muted)}
+.flow li b{display:block;color:var(--fg);font-family:var(--f-display);font-size:15px}
+.flow li b::before{content:counter(f) ". ";color:var(--ai)}
+.notice{font-size:13px;border-radius:8px;padding:10px 14px;background:var(--sunk);color:var(--muted);margin:12px 0}
+.notice.warn{color:var(--warn)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;max-width:820px}
+.panel h1{font-size:24px;margin-bottom:4px}
+.panel h2{font-size:16px;color:var(--ai);margin-top:8px}
+.form{display:grid;gap:16px;margin-top:20px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label.f{display:grid;gap:6px;font-size:13px;font-weight:500}
+label.f small{color:var(--muted);font-weight:400}
+input[type=text],input[type=date],input[type=password],textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 12px}
+textarea{resize:vertical;min-height:90px}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.devices{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start;background:var(--sunk);border-radius:var(--r);padding:14px}
+.devices video{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;background:#1b2b40;transform:scaleX(-1);display:block}
+.devstat{display:grid;gap:6px;font-size:13px}
+.devstat div{display:flex;gap:8px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+.dot.ok{background:var(--accent)} .dot.ng{background:var(--rec)}
+.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;width:160px}
+.meter i{display:block;height:100%;width:0;background:var(--accent);transition:width .08s}
+details.ai{border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}
+details.ai summary{cursor:pointer;font-weight:500;font-size:14px}
+details.ai .form{margin-top:12px}
+
+.iv{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px;align-items:start}
+.stage-box{position:sticky;top:12px}
+canvas#stage{width:100%;max-width:100%;aspect-ratio:16/9;border-radius:var(--r);display:block;background:#1b2b40}
+.stage-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--muted)}
+.rec{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--rec)}
+.rec i{width:9px;height:9px;border-radius:50%;background:var(--rec);animation:blink 1.2s infinite}
+.rec.off{color:var(--muted)} .rec.off i{background:var(--muted);animation:none}
+@keyframes blink{50%{opacity:.25}}
+.steps{display:flex;gap:4px;margin-bottom:12px}
+.steps div{flex:1;min-width:0;font-size:11px;text-align:center;padding:6px 2px;border-radius:6px;background:var(--sunk);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.steps div.done{background:var(--accent-soft);color:var(--accent)}
+.steps div.now{background:var(--ai);color:var(--surface);font-weight:700}
+.chat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;height:min(72vh,640px);min-height:440px}
+.log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:88%;padding:9px 13px;border-radius:12px;font-size:14px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.msg.coach{background:var(--ai-soft);align-self:flex-start;border-top-left-radius:3px}
+.msg.learner{background:var(--accent-soft);align-self:flex-end;border-top-right-radius:3px}
+.msg .who{display:block;font-size:11px;color:var(--muted);font-weight:700}
+.msg.typing::after{content:"▍";animation:blink 1s infinite;color:var(--ai)}
+.composer{border-top:1px solid var(--line);padding:12px;display:grid;gap:8px}
+.composer textarea{min-height:72px;background:var(--bg)}
+.composer .actions{justify-content:space-between}
+.mic{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:14px;font-weight:500}
+.mic .dot{width:10px;height:10px}
+.mic.listen{border-color:var(--rec);color:var(--rec)} .mic.listen .dot{background:var(--rec);animation:blink 1s infinite}
+.mic.wait{border-color:var(--ai);color:var(--ai)} .mic.wait .dot{background:var(--ai)}
+.hint{font-size:12px;color:var(--muted)}
+
+.doc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;max-width:860px}
+.doc-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:8px}
+.doc-head h1{font-size:24px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;margin:0}
+.kv dd{margin:0;color:var(--fg)}
+.sec{padding-block:16px;border-bottom:1px solid var(--line)}
+.sec:last-child{border-bottom:0}
+.sec h2{font-size:16px;margin-bottom:8px;color:var(--ai)}
+.sec ul{margin:0;padding-left:1.3em}
+.sec p{margin:0}
+[contenteditable="true"]{border-radius:4px;outline:1px dashed transparent;padding:0 2px}
+[contenteditable="true"]:hover{outline-color:var(--line)}
+[contenteditable="true"]:focus{outline:1px solid var(--ai);background:var(--bg)}
+.goals{display:grid;gap:10px}
+.goalc{border:1px solid var(--accent);border-radius:8px;padding:12px 14px;display:grid;gap:4px}
+.goalc .g{font-weight:700;font-size:15px}
+.goalc dl{display:grid;grid-template-columns:5.5em 1fr;gap:2px 10px;margin:4px 0 0;font-size:13px}
+.goalc dt{color:var(--muted)} .goalc dd{margin:0}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tags span{font-size:12px;background:var(--sunk);border-radius:999px;padding:2px 10px}
+.progress{list-style:none;padding:0;margin:14px 0;display:grid;gap:6px;font-size:14px}
+.progress li{display:flex;gap:8px;align-items:center;color:var(--muted)}
+.progress li::before{content:"";width:10px;height:10px;border-radius:50%;border:2px solid var(--line);flex:none}
+.progress li.run{color:var(--fg)} .progress li.run::before{border-color:var(--ai);border-top-color:transparent;animation:spin .8s linear infinite}
+.progress li.ok{color:var(--accent)} .progress li.ok::before{background:var(--accent);border-color:var(--accent)}
+.progress li.skip{color:var(--warn)} .progress li.skip::before{border-color:var(--warn)}
+@keyframes spin{to{transform:rotate(360deg)}}
+video.play{width:100%;max-width:100%;border-radius:var(--r);background:#000;display:block;aspect-ratio:16/9}
+details.tr summary{cursor:pointer;color:var(--ai);font-size:14px}
+.tr-line{display:grid;grid-template-columns:3.6em 4.5em 1fr;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px dotted var(--line)}
+.tr-line time{font-family:var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.loading{display:flex;align-items:center;gap:12px;color:var(--muted);padding:24px 0}
+.loading::before{content:"";width:18px;height:18px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--ai);animation:spin .8s linear infinite}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:14px;z-index:9;max-width:calc(100% - 32px)}
+#cam{position:fixed;width:2px;height:2px;opacity:0;pointer-events:none;left:0;top:0}
+
+#report-host{position:fixed;left:-12000px;top:0;width:794px;background:#ffffff;color:#14263a}
+.rp{width:794px;padding:0 60px;font-family:var(--f-body);font-size:13px;line-height:1.75;color:#14263a;background:#ffffff}
+.rp .blk{padding-top:10px}
+.rp .title{padding-top:56px;border-bottom:3px solid #22466f;padding-bottom:12px}
+.rp .title small{color:#566879;letter-spacing:.12em;font-size:11px}
+.rp .title h1{font-family:var(--f-display);font-size:24px;color:#14263a}
+.rp table.info{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px}
+.rp table.info td{border:1px solid #d6dee4;padding:6px 10px}
+.rp table.info td:nth-child(odd){background:#eef3f7;width:16%;color:#566879}
+.rp h2{font-family:var(--f-display);font-size:15px;color:#22466f;border-left:4px solid #2c8a64;padding-left:8px;margin-top:14px}
+.rp ul{margin:0;padding-left:1.4em}
+.rp .goalbox{border:1px solid #2c8a64;border-radius:6px;padding:10px 12px}
+.rp .goalbox b{font-size:14px}
+.rp .goalbox table{width:100%;border-collapse:collapse;margin-top:4px;font-size:12px}
+.rp .goalbox td{padding:2px 6px;vertical-align:top}
+.rp .goalbox td:first-child{color:#566879;width:18%}
+.rp .trl{display:grid;grid-template-columns:48px 64px 1fr;gap:6px;font-size:11.5px;padding:3px 0;border-bottom:1px dotted #d6dee4}
+.rp .trl span:first-child{color:#566879;font-family:var(--f-mono)}
+.rp .sign{display:flex;justify-content:flex-end;margin-top:18px}
+.rp .sign div{border:1px solid #d6dee4;width:96px;height:72px;font-size:10px;color:#566879;text-align:center;padding-top:2px}
+
+@media (max-width:900px){.iv{grid-template-columns:1fr}.stage-box{position:static}.chat{height:auto;min-height:0}.log{max-height:50vh}}
+@media (max-width:600px){.row2,.devices{grid-template-columns:1fr}.doc,.panel{padding:18px}.steps div{font-size:10px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">灯</div>
+      <div><b>研修振り返りコーチ</b><small>音声・カメラ対応サンプル</small></div>
+    </div>
+    <nav class="nav">
+      <button class="btn ghost" id="nav-list" type="button">学習記録</button>
+      <button class="btn primary" id="nav-new" type="button">新しい面談</button>
+    </nav>
+  </header>
+
+  <section id="view-list">
+    <div class="head-row">
+      <div>
+        <h1>学習記録</h1>
+        <p class="sub">面談の動画と振り返りレポート（PDF）を、このパソコンのブラウザ内に保存しています。</p>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div id="list-body"><div class="loading">学習記録を読み込んでいます</div></div>
+  </section>
+
+  <section id="view-setup" hidden>
+    <div class="panel">
+      <h1>面談の準備</h1>
+      <p class="sub">研修の情報と機器を確認したら、AIコーチ「あかり」との面談を始めます。面談の様子（コーチ、あなたのカメラ映像、字幕、あなたの声）は録画されます。</p>
+      <p class="notice warn" id="env-warn" hidden></p>
+      <form class="form" id="setup-form">
+        <label class="f">研修名
+          <input type="text" id="s-title" required placeholder="例：1on1ミーティング実践研修">
+        </label>
+        <div class="row2">
+          <label class="f">研修日<input type="date" id="s-date" required></label>
+          <label class="f">受講者名<input type="text" id="s-name" required placeholder="例：山田 花子"></label>
+        </div>
+        <label class="f">所属 <small>任意</small><input type="text" id="s-dept" placeholder="例：営業部 第二課"></label>
+        <label class="f">研修の内容・要点 <small>任意。書いておくと質問が具体的になります</small>
+          <textarea id="s-notes" placeholder="例：傾聴の3ステップ、承認の伝え方、GROWモデルによる目標設定を学んだ。"></textarea>
+        </label>
+
+        <h2>カメラとマイク</h2>
+        <div class="devices">
+          <video id="cam-preview" muted playsinline autoplay></video>
+          <div class="devstat">
+            <div><span class="dot" id="d-cam"></span><span id="t-cam">カメラ：未確認</span></div>
+            <div><span class="dot" id="d-mic"></span><span id="t-mic">マイク：未確認</span><span class="meter" aria-hidden="true"><i id="meter"></i></span></div>
+            <div><span class="dot" id="d-sr"></span><span id="t-sr">音声認識：確認中</span></div>
+            <div><span class="dot" id="d-tts"></span><span id="t-tts">読み上げ：確認中</span></div>
+            <div class="actions" style="margin-top:6px"><button class="btn" type="button" id="dev-btn">カメラとマイクを確認</button></div>
+            <span class="hint">ブラウザに許可を求められたら「許可」を選んでください。話すとメーターが動けばマイクは使えます。</span>
+          </div>
+        </div>
+        <div class="actions" style="gap:18px">
+          <label class="check"><input type="checkbox" id="o-cam" checked> カメラを使う</label>
+          <label class="check"><input type="checkbox" id="o-mic" checked> 声で答える</label>
+          <label class="check"><input type="checkbox" id="o-voice" checked> コーチの声を読み上げる</label>
+        </div>
+
+        <details class="ai" id="ai-box">
+          <summary>AIの設定（未設定ならデモ面談）</summary>
+          <div class="form">
+            <p class="hint" style="margin:0">Claude APIキーを入れると、AIが回答に合わせて質問し、要約も作ります。入れない場合は、決まった質問で進むデモ面談になります。キーはこのブラウザからAnthropicのAPIへ直接送られます。社内での試用に限ってお使いください。</p>
+            <label class="f">APIキー<input type="password" id="k-key" autocomplete="off" placeholder="sk-ant-..."></label>
+            <label class="f">モデル<input type="text" id="k-model" value="claude-sonnet-5-5"></label>
+            <label class="check"><input type="checkbox" id="k-save"> このパソコンのブラウザにキーを保存する</label>
+          </div>
+        </details>
+
+        <div class="actions">
+          <button class="btn go" type="submit" id="start-btn">面談を開始する</button>
+          <button class="btn ghost" type="button" id="setup-cancel">戻る</button>
+        </div>
+        <p class="hint" style="margin:0">所要時間の目安は10〜15分です。イヤホンを使うと、コーチの声をマイクが拾いにくくなり、聞き取りが安定します。</p>
+      </form>
+    </div>
+  </section>
+
+  <section id="view-interview" hidden>
+    <div class="iv">
+      <div class="stage-box">
+        <canvas id="stage" width="960" height="540" aria-label="AIコーチとの面談画面（この画面が録画されます）"></canvas>
+        <div class="stage-bar">
+          <span class="rec off" id="rec"><i></i><span id="rec-t">録画待機</span></span>
+          <label class="check"><input type="checkbox" id="iv-voice"> コーチの声</label>
+        </div>
+      </div>
+      <div>
+        <div class="steps" id="steps"></div>
+        <div class="chat">
+          <div class="log" id="log" aria-live="polite"></div>
+          <form class="composer" id="composer">
+            <label for="answer" class="hint" id="answer-label">あなたの回答</label>
+            <textarea id="answer" placeholder="マイクで話すか、ここに入力してください"></textarea>
+            <div class="actions">
+              <span class="actions">
+                <button class="mic" type="button" id="mic-btn"><span class="dot"></span><span id="mic-t">マイクで話す</span></button>
+                <label class="check hint"><input type="checkbox" id="auto-send" checked> 話し終えたら自動で送信</label>
+              </span>
+              <span class="actions">
+                <button class="btn ghost" type="button" id="end-btn">面談を終了</button>
+                <button class="btn primary" type="submit" id="send-btn">送信</button>
+              </span>
+            </div>
+          </form>
+        </div>
+        <p class="notice" id="iv-note" hidden></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-review" hidden><div class="doc" id="review-doc"></div></section>
+  <section id="view-detail" hidden><div class="doc" id="detail-doc"></div></section>
+</div>
+
+<video id="cam" muted playsinline autoplay></video>
+<div id="report-host" aria-hidden="true"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const PHASES = ["振り返り","学び・気づき","仕事への適用","行動目標","まとめ"];
+const todayJST = () => new Date().toLocaleDateString("sv-SE",{timeZone:"Asia/Tokyo"});
+const fmtTime = s => { s = Math.max(0, Math.round(s)); return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"); };
+const fmtDate = ms => new Date(ms).toLocaleString("ja-JP",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+const ls = { get(k){ try { return localStorage.getItem(k); } catch { return null; } }, set(k,v){ try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k,v); } catch {} } };
+
+const S = { records:[], ses:null, media:null, audioCtx:null, analyser:null, urls:[], detailId:null };
+const L = { on:false, running:false, rec:null, base:"", timer:0 };
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const hasTTS = "speechSynthesis" in window;
+
+function toast(msg){ const t=document.createElement("div"); t.className="toast"; t.textContent=msg; document.body.append(t); setTimeout(()=>t.remove(),3200); }
+
+/* ---------- local storage of records (IndexedDB) ---------- */
+const DB = (() => {
+  let p;
+  const open = () => p ||= new Promise((res, rej) => {
+    const r = indexedDB.open("reflection-coach", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("records", { keyPath:"id" });
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+  const run = async (mode, fn) => {
+    const db = await open();
+    return new Promise((res, rej) => {
+      const t = db.transaction("records", mode); const req = fn(t.objectStore("records"));
+      t.oncomplete = () => res(req ? req.result : undefined); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+    });
+  };
+  return { all: () => run("readonly", s => s.getAll()), put: r => run("readwrite", s => s.put(r)), del: id => run("readwrite", s => s.delete(id)) };
+})();
+async function loadRecords(){
+  try { S.records = (await DB.all()).sort((a,b) => b.createdAt - a.createdAt); S.dbError = null; }
+  catch (e) { S.records = []; S.dbError = "このブラウザでは記録を保存できません（" + (e && e.message || e) + "）"; }
+  renderList();
+}
+
+/* ---------- views ---------- */
+const VIEWS = ["list","setup","interview","review","detail"];
+function show(v){
+  VIEWS.forEach(n => $("#view-"+n).hidden = n!==v);
+  if (v !== "detail") { S.urls.forEach(u => URL.revokeObjectURL(u)); S.urls = []; }
+  if (v !== "setup" && v !== "interview") stopMeterLoop();
+  window.scrollTo({top:0});
+}
+const guardLeave = () => { if (S.ses && S.ses.state === "live") { toast("面談中です。先に「面談を終了」を押してください"); return false; } return true; };
+$("#nav-list").onclick = () => { if (guardLeave()) { releaseMedia(); show("list"); loadRecords(); } };
+$("#nav-new").onclick = () => { if (guardLeave()) openSetup(); };
+
+/* ---------- list ---------- */
+function renderList(){
+  const recs = S.records;
+  const goals = recs.reduce((n,r)=>n+((r.summary&&r.summary.goals)||[]).length,0);
+  const mins = recs.reduce((n,r)=>n+(r.durationSec||0),0)/60;
+  const bytes = recs.reduce((n,r)=>n+((r.video&&r.video.size)||0)+((r.pdf&&r.pdf.size)||0),0);
+  $("#stats").innerHTML = `<div><b>${recs.length}</b>面談の記録</div><div><b>${goals}</b>設定した行動目標</div><div><b>${Math.round(mins)}<small style="font-size:14px"> 分</small></b>面談時間の合計</div><div><b>${(bytes/1048576).toFixed(1)}<small style="font-size:14px"> MB</small></b>保存容量</div>`;
+  const body = $("#list-body");
+  if (!recs.length) {
+    body.innerHTML = `<div class="empty">
+      <h2>まだ記録がありません</h2>
+      <p class="sub">研修を受けたら、AIコーチと声で面談して、振り返りと目標設定をしましょう。終わると動画とPDFがここに保存されます。</p>
+      <ol class="flow">
+        <li><b>研修情報と機器を確認</b>研修名・要点、カメラ・マイク</li>
+        <li><b>AIコーチと声で面談</b>振り返り→気づき→仕事への適用</li>
+        <li><b>行動目標を設定</b>何を・いつまでに・どう測るか</li>
+        <li><b>動画とPDFを保存</b>学習記録として一覧で振り返れる</li>
+      </ol>
+      <button class="btn go" type="button" id="empty-start">最初の面談を始める</button>
+      ${S.dbError ? `<p class="notice warn">${esc(S.dbError)}</p>` : ""}
+    </div>`;
+    $("#empty-start").onclick = openSetup; return;
+  }
+  body.innerHTML = `<div class="cards">${recs.map(r => {
+    const g = r.summary && r.summary.goals && r.summary.goals[0];
+    return `<button class="card" type="button" data-id="${esc(r.id)}">
+      <div class="meta"><span>研修日 ${esc(r.trainingDate||"")}</span><span>${esc(fmtTime(r.durationSec||0))}</span></div>
+      <h3>${esc(r.trainingTitle||"（無題の研修）")}</h3>
+      <div class="meta" style="justify-content:flex-start">${esc(r.learnerName||"")}${r.dept?"・"+esc(r.dept):""}</div>
+      ${g ? `<div class="goal"><span>行動目標</span>${esc(g.goal)}</div>`:""}
+      <div class="chips"><span class="chip ${r.video?"ok":""}">動画${r.video?"":"なし"}</span><span class="chip ${r.pdf?"ok":""}">PDF${r.pdf?"":"なし"}</span>${r.demo?'<span class="chip">デモ面談</span>':""}</div>
+    </button>`; }).join("")}</div>`;
+  body.querySelectorAll(".card").forEach(c => c.onclick = () => { S.detailId = c.dataset.id; show("detail"); renderDetail(c.dataset.id); });
+}
+
+/* ---------- setup & devices ---------- */
+function envCheck(){
+  const w = [];
+  if (!window.isSecureContext) w.push("このページの開き方ではカメラとマイクを使えません。ファイルをダウンロードして、Chrome か Edge で直接開いてください。");
+  if (!SR) w.push("このブラウザは音声認識に対応していません。声で答えるには Chrome か Edge を使ってください（キーボード入力はできます）。");
+  $("#env-warn").hidden = !w.length; $("#env-warn").textContent = w.join(" ");
+  setDev("sr", SR ? "ok" : "ng", SR ? "音声認識：使えます（日本語）" : "音声認識：このブラウザは非対応");
+  setDev("tts", hasTTS ? "ok" : "ng", hasTTS ? "読み上げ：使えます" : "読み上げ：このブラウザは非対応");
+  if (!SR) $("#o-mic").checked = false;
+}
+function setDev(k, st, txt){ $("#d-"+k).className = "dot" + (st ? " "+st : ""); $("#t-"+k).textContent = txt; }
+function openSetup(){
+  if (!$("#s-date").value) $("#s-date").value = todayJST();
+  const k = ls.get("rc.key"), m = ls.get("rc.model");
+  if (k && !$("#k-key").value) { $("#k-key").value = k; $("#k-save").checked = true; }
+  if (m) $("#k-model").value = m;
+  envCheck(); show("setup"); $("#s-title").focus();
+  if (S.media) attachPreview();
+}
+$("#setup-cancel").onclick = () => { releaseMedia(); show("list"); };
+$("#dev-btn").onclick = () => acquireMedia($("#o-cam").checked, $("#o-mic").checked || true);
+
+async function acquireMedia(wantCam, wantMic){
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setDev("cam","ng","カメラ：このページでは使えません"); setDev("mic","ng","マイク：このページでは使えません"); return false;
+  }
+  releaseMedia();
+  const vid = { width:{ideal:640}, height:{ideal:480}, facingMode:"user" };
+  const aud = { echoCancellation:true, noiseSuppression:true, autoGainControl:true };
+  let stream = null, err = null;
+  try { stream = await navigator.mediaDevices.getUserMedia({ video: wantCam ? vid : false, audio: wantMic ? aud : false }); }
+  catch (e) { err = e; }
+  if (!stream && wantCam && wantMic) { try { stream = await navigator.mediaDevices.getUserMedia({ video:false, audio:aud }); } catch {} }
+  if (!stream && wantCam && wantMic) { try { stream = await navigator.mediaDevices.getUserMedia({ video:vid, audio:false }); } catch {} }
+  if (!stream) {
+    const why = err && err.name === "NotAllowedError" ? "許可されませんでした" : err && err.name === "NotFoundError" ? "見つかりません" : "使えません";
+    setDev("cam","ng","カメラ："+why); setDev("mic","ng","マイク："+why); return false;
+  }
+  S.media = stream;
+  const hasV = stream.getVideoTracks().length > 0, hasA = stream.getAudioTracks().length > 0;
+  setDev("cam", hasV ? "ok" : "ng", hasV ? "カメラ：使えます" : wantCam ? "カメラ：使えません" : "カメラ：使わない");
+  setDev("mic", hasA ? "ok" : "ng", hasA ? "マイク：使えます" : "マイク：使えません");
+  if (!hasV) $("#o-cam").checked = false;
+  if (!hasA) $("#o-mic").checked = false;
+  $("#cam").srcObject = stream; $("#cam").play().catch(()=>{});
+  attachPreview();
+  if (hasA) {
+    try {
+      S.audioCtx = S.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (S.audioCtx.state === "suspended") await S.audioCtx.resume();
+      const src = S.audioCtx.createMediaStreamSource(stream); const an = S.audioCtx.createAnalyser(); an.fftSize = 1024; src.connect(an);
+      S.analyser = an; S.levelBuf = new Float32Array(an.fftSize);
+    } catch { S.analyser = null; }
+  }
+  startMeterLoop();
+  return true;
+}
+function attachPreview(){ const p = $("#cam-preview"); p.srcObject = S.media; p.play().catch(()=>{}); }
+function releaseMedia(){
+  if (S.media) S.media.getTracks().forEach(t => t.stop());
+  S.media = null; S.analyser = null; $("#cam").srcObject = null; $("#cam-preview").srcObject = null;
+  $("#meter").style.width = "0";
+}
+function micLevel(){
+  if (!S.analyser) return 0;
+  S.analyser.getFloatTimeDomainData(S.levelBuf);
+  let s = 0; for (const v of S.levelBuf) s += v*v;
+  return Math.min(1, Math.sqrt(s / S.levelBuf.length) * 6);
+}
+let meterRaf = 0;
+function startMeterLoop(){ if (meterRaf) return; const step = () => { $("#meter").style.width = Math.round(micLevel()*100) + "%"; meterRaf = requestAnimationFrame(step); }; meterRaf = requestAnimationFrame(step); }
+function stopMeterLoop(){ cancelAnimationFrame(meterRaf); meterRaf = 0; }
+
+$("#setup-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const useCam = $("#o-cam").checked, useMic = $("#o-mic").checked && !!SR;
+  const key = $("#k-key").value.trim(), model = $("#k-model").value.trim() || "claude-sonnet-5-5";
+  ls.set("rc.key", $("#k-save").checked && key ? key : null); ls.set("rc.model", model);
+  $("#start-btn").disabled = true;
+  if ((useCam || $("#o-mic").checked) && !S.media) await acquireMedia(useCam, true);
+  $("#start-btn").disabled = false;
+  // speech synthesis needs a user gesture to unlock in some browsers
+  if (hasTTS && $("#o-voice").checked) { try { const u = new SpeechSynthesisUtterance(""); speechSynthesis.speak(u); } catch {} }
+  startInterview({
+    trainingTitle: $("#s-title").value.trim(), trainingDate: $("#s-date").value,
+    learnerName: $("#s-name").value.trim(), dept: $("#s-dept").value.trim(), notes: $("#s-notes").value.trim(),
+    voice: $("#o-voice").checked && hasTTS, useMic: useMic && !!(S.media && S.media.getAudioTracks().length),
+    useCam: useCam && !!(S.media && S.media.getVideoTracks().length), key, model
+  });
+});
+
+/* ---------- avatar stage ---------- */
+const cv = $("#stage"), cx = cv.getContext("2d");
+const AV = { speaking:false, speakUntil:0, blinkAt:0, coachLine:"", learnerLine:"", phase:0 };
+function wrapLines(text, maxW, maxLines){
+  const out=[]; let line="";
+  for (const ch of String(text).replace(/\s+/g," ")) { if (cx.measureText(line+ch).width > maxW) { out.push(line); line = ch; } else line += ch; }
+  if (line) out.push(line);
+  if (out.length > maxLines) { const k = out.slice(-maxLines); k[0] = "…" + k[0].slice(1); return k; }
+  return out;
+}
+function rr(x,y,w,h,r){ cx.beginPath(); if (cx.roundRect) cx.roundRect(x,y,w,h,r); else cx.rect(x,y,w,h); }
+function drawAvatar(t){
+  const speaking = AV.speaking || performance.now() < AV.speakUntil;
+  const bob = Math.sin(t/900)*3, X = 200, Y = 300 + bob;
+  const g = cx.createRadialGradient(X,Y-30,20,X,Y-30,230); g.addColorStop(0,"rgba(147,183,227,.35)"); g.addColorStop(1,"rgba(147,183,227,0)");
+  cx.fillStyle=g; cx.fillRect(0,0,400,540);
+  cx.fillStyle="#2b3f5c"; cx.beginPath(); cx.moveTo(X-150,540); cx.quadraticCurveTo(X-140,Y+95,X,Y+88); cx.quadraticCurveTo(X+140,Y+95,X+150,540); cx.fill();
+  cx.fillStyle="#f4f6f8"; cx.beginPath(); cx.moveTo(X-34,Y+90); cx.lineTo(X,Y+170); cx.lineTo(X+34,Y+90); cx.fill();
+  cx.fillStyle="#2c8a64"; cx.beginPath(); cx.moveTo(X-8,Y+96); cx.lineTo(X+8,Y+96); cx.lineTo(X+5,Y+150); cx.lineTo(X,Y+158); cx.lineTo(X-5,Y+150); cx.fill();
+  cx.fillStyle="#efc9ad"; cx.fillRect(X-22,Y+40,44,55);
+  cx.fillStyle="#2a2321"; cx.beginPath(); cx.ellipse(X,Y-20,98,110,0,0,Math.PI*2); cx.fill(); cx.fillRect(X-98,Y-20,196,100);
+  cx.fillStyle="#f6d6bd"; cx.beginPath(); cx.ellipse(X,Y-5,78,92,0,0,Math.PI*2); cx.fill();
+  cx.fillStyle="#2a2321"; cx.beginPath(); cx.moveTo(X-84,Y-30); cx.quadraticCurveTo(X-70,Y-120,X+10,Y-108); cx.quadraticCurveTo(X+85,Y-100,X+84,Y-25); cx.quadraticCurveTo(X+40,Y-70,X-10,Y-62); cx.quadraticCurveTo(X-55,Y-58,X-84,Y-30); cx.fill();
+  cx.fillStyle="rgba(232,140,120,.22)"; cx.beginPath(); cx.ellipse(X-46,Y+22,15,8,0,0,Math.PI*2); cx.ellipse(X+46,Y+22,15,8,0,0,Math.PI*2); cx.fill();
+  if (t > AV.blinkAt + 140 && Math.random() < 0.006) AV.blinkAt = t;
+  const closed = t - AV.blinkAt < 140;
+  cx.fillStyle="#2a2321"; cx.strokeStyle="#2a2321"; cx.lineWidth=3; cx.lineCap="round";
+  for (const s of [-1,1]) {
+    const ex = X + s*30, ey = Y - 2;
+    if (closed) { cx.beginPath(); cx.moveTo(ex-9,ey); cx.quadraticCurveTo(ex,ey+5,ex+9,ey); cx.stroke(); }
+    else { cx.beginPath(); cx.ellipse(ex,ey,7,9.5,0,0,Math.PI*2); cx.fill(); cx.fillStyle="#fff"; cx.beginPath(); cx.arc(ex+2.5,ey-3,2.4,0,Math.PI*2); cx.fill(); cx.fillStyle="#2a2321"; }
+    cx.beginPath(); cx.moveTo(ex-12,ey-22-(speaking?Math.abs(Math.sin(t/300))*2:0)); cx.quadraticCurveTo(ex,ey-28,ex+12,ey-21); cx.stroke();
+  }
+  const open = speaking ? (0.25 + 0.75*Math.abs(Math.sin(t/85)*Math.sin(t/233+1))) : 0;
+  cx.fillStyle="#b4544a";
+  if (open > 0.08) { cx.beginPath(); cx.ellipse(X,Y+42,13,3+open*11,0,0,Math.PI*2); cx.fill(); }
+  else { cx.strokeStyle="#b4544a"; cx.lineWidth=3; cx.beginPath(); cx.moveTo(X-13,Y+40); cx.quadraticCurveTo(X,Y+49,X+13,Y+40); cx.stroke(); }
+  rr(X-70,486,140,32,16); cx.fillStyle="rgba(255,255,255,.92)"; cx.fill();
+  cx.fillStyle="#22466f"; cx.font="700 15px 'Zen Maru Gothic','Noto Sans JP',sans-serif"; cx.textAlign="center"; cx.fillText("AIコーチ あかり",X,508); cx.textAlign="left";
+}
+function drawCam(x, y, w, h){
+  const v = $("#cam");
+  cx.save(); rr(x,y,w,h,10); cx.clip();
+  if (S.ses && S.ses.useCam && v.readyState >= 2 && v.videoWidth) {
+    const vr = v.videoWidth / v.videoHeight, br = w / h;
+    let sw = v.videoWidth, sh = v.videoHeight, sx = 0, sy = 0;
+    if (vr > br) { sw = sh * br; sx = (v.videoWidth - sw) / 2; } else { sh = sw / br; sy = (v.videoHeight - sh) / 2; }
+    cx.translate(x + w, y); cx.scale(-1, 1); cx.drawImage(v, sx, sy, sw, sh, 0, 0, w, h);
+  } else {
+    cx.fillStyle = "#0f1d2e"; cx.fillRect(x,y,w,h);
+    cx.fillStyle = "rgba(255,255,255,.5)"; cx.font = "500 13px 'Noto Sans JP',sans-serif"; cx.textAlign = "center"; cx.fillText("カメラなし", x+w/2, y+h/2+4); cx.textAlign = "left";
+  }
+  cx.restore();
+}
+function drawStage(t){
+  const ses = S.ses;
+  const bg = cx.createLinearGradient(0,0,960,540); bg.addColorStop(0,"#1d3352"); bg.addColorStop(1,"#14263a");
+  cx.fillStyle=bg; cx.fillRect(0,0,960,540);
+  drawAvatar(t);
+  const PX=410, PW=526;
+  cx.fillStyle="rgba(255,255,255,.62)"; cx.font="500 13px 'Noto Sans JP',sans-serif";
+  cx.fillText(ses ? `${ses.learnerName} さん　｜　研修日 ${ses.trainingDate}` : "研修振り返り面談", PX, 40);
+  cx.fillStyle="#fff"; cx.font="700 22px 'Zen Maru Gothic','Noto Sans JP',sans-serif";
+  cx.fillText(wrapLines(ses ? ses.trainingTitle : "", PW, 1)[0] || "", PX, 70);
+  let x = PX; cx.font="500 12px 'Noto Sans JP',sans-serif";
+  PHASES.forEach((p,i) => {
+    const w = cx.measureText(p).width + 20; rr(x,84,w,24,12);
+    cx.fillStyle = i < AV.phase ? "rgba(94,200,155,.28)" : i===AV.phase ? "#5ec89b" : "rgba(255,255,255,.1)"; cx.fill();
+    cx.fillStyle = i===AV.phase ? "#0e2a1e" : "rgba(255,255,255,.8)"; cx.fillText(p, x+10, 101); x += w + 6;
+  });
+  rr(PX,120,PW,196,12); cx.fillStyle="rgba(255,255,255,.95)"; cx.fill();
+  cx.fillStyle="#22466f"; cx.font="700 13px 'Noto Sans JP',sans-serif"; cx.fillText("コーチ", PX+18, 145);
+  cx.fillStyle="#14263a"; cx.font="500 19px 'Noto Sans JP',sans-serif";
+  wrapLines(AV.coachLine || "…", PW-36, 5).forEach((l,i) => cx.fillText(l, PX+18, 176+i*29));
+  // learner box with live camera
+  rr(PX,328,PW,176,12); cx.fillStyle="rgba(94,200,155,.16)"; cx.fill();
+  drawCam(PX+10, 338, 208, 156);
+  const TX = PX+232, TW = PW-248;
+  cx.fillStyle="#8fe0bb"; cx.font="700 13px 'Noto Sans JP',sans-serif"; cx.fillText(ses ? ses.learnerName+" さん" : "受講者", TX, 356);
+  if (L.running) {
+    const lv = micLevel();
+    cx.fillStyle = "#f07264"; cx.beginPath(); cx.arc(TX+TW-92, 351, 4, 0, Math.PI*2); cx.fill();
+    cx.fillStyle = "rgba(255,255,255,.75)"; cx.font="500 11px 'Noto Sans JP',sans-serif"; cx.fillText("聞き取り中", TX+TW-84, 355);
+    cx.fillStyle = "rgba(255,255,255,.15)"; cx.fillRect(TX, 364, TW, 4); cx.fillStyle = "#5ec89b"; cx.fillRect(TX, 364, TW*lv, 4);
+  }
+  cx.fillStyle="#eef6f2"; cx.font="400 16px 'Noto Sans JP',sans-serif";
+  wrapLines(AV.learnerLine || "（回答を待っています）", TW, 5).forEach((l,i) => cx.fillText(l, TX, 392+i*24));
+  cx.font="500 12px 'IBM Plex Mono',monospace";
+  if (ses && ses.recording) { cx.fillStyle = Math.floor(t/600)%2 ? "#f07264" : "rgba(240,114,100,.4)"; cx.beginPath(); cx.arc(PX+6,524,5,0,Math.PI*2); cx.fill(); cx.fillStyle="rgba(255,255,255,.8)"; cx.fillText("REC "+fmtTime((Date.now()-ses.startedAt)/1000), PX+18, 528); }
+  cx.fillStyle="rgba(255,255,255,.5)"; cx.textAlign="right"; cx.fillText(new Date().toLocaleString("ja-JP",{timeZone:"Asia/Tokyo"}), PX+PW, 528); cx.textAlign="left";
+}
+// keep drawing even when the tab is in the background (rAF pauses there; the recording must not freeze)
+let drawTimer = 0;
+function startLoop(){ if (!drawTimer) drawTimer = setInterval(() => drawStage(performance.now()), 1000/15); }
+function stopLoop(){ clearInterval(drawTimer); drawTimer = 0; }
+if (document.fonts) document.fonts.ready.then(() => drawStage(performance.now()));
+drawStage(0);
+
+/* ---------- speech synthesis ---------- */
+let jaVoice = null;
+function pickVoice(){ try { const vs = speechSynthesis.getVoices(); jaVoice = vs.find(v => /ja/i.test(v.lang) && /Nanami|Kyoko|O-ren|Google|female/i.test(v.name)) || vs.find(v => /ja/i.test(v.lang)) || null; } catch {} }
+if (hasTTS) { pickVoice(); try { speechSynthesis.onvoiceschanged = pickVoice; } catch {} }
+function speak(text, after){
+  const est = Math.min(30000, 900 + text.length * 140);
+  if (!S.ses || !S.ses.voice || !hasTTS) { AV.speakUntil = performance.now() + est; after && after(); return; }
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text); u.lang = "ja-JP"; u.rate = 1.05; if (jaVoice) u.voice = jaVoice;
+    AV.speaking = true; let fired = false;
+    const done = () => { if (fired) return; fired = true; AV.speaking = false; after && after(); };
+    u.onend = done; u.onerror = done; setTimeout(done, est + 5000);
+    speechSynthesis.speak(u);
+  } catch { AV.speaking = false; after && after(); }
+}
+function hush(){ try { speechSynthesis.cancel(); } catch {} AV.speaking = false; }
+$("#iv-voice").onchange = e => { if (S.ses) S.ses.voice = e.target.checked; if (!e.target.checked) { hush(); startListen(); } };
+
+/* ---------- speech recognition ---------- */
+function micUI(){
+  const b = $("#mic-btn"), t = $("#mic-t");
+  b.hidden = !(S.ses && S.ses.useMic);
+  b.classList.toggle("listen", L.running); b.classList.toggle("wait", L.on && !L.running);
+  t.textContent = L.running ? "聞き取り中（押すと止めます）" : L.on ? "コーチの発言後に聞き取ります" : "マイクで話す";
+  $("#answer-label").textContent = L.on ? "あなたの回答（話した内容がここに入ります。直してから送信もできます）" : "あなたの回答（Enterで送信／Shift+Enterで改行）";
+}
+function startListen(){
+  if (!L.on || L.running || !SR || !S.ses || S.ses.state !== "live" || S.ses.busy || AV.speaking) { micUI(); return; }
+  const r = new SR(); r.lang = "ja-JP"; r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
+  const cur = $("#answer").value.trim(); L.base = cur ? cur + " " : "";
+  r.onresult = e => {
+    let fin = "", interim = "";
+    for (let i = 0; i < e.results.length; i++) { const tx = e.results[i][0].transcript; if (e.results[i].isFinal) fin += tx; else interim += tx; }
+    const v = L.base + fin + interim; $("#answer").value = v; AV.learnerLine = v;
+    clearTimeout(L.timer);
+    if (!interim && fin && $("#auto-send").checked) L.timer = setTimeout(() => { if (L.running && $("#answer").value.trim()) $("#composer").requestSubmit(); }, 1800);
+  };
+  r.onerror = e => {
+    if (e.error === "not-allowed" || e.error === "service-not-allowed") { L.on = false; note("音声認識が許可されませんでした。キーボードで入力してください。", true); }
+    else if (e.error === "network") { L.on = false; note("音声認識サービスに接続できません。インターネット接続を確認するか、キーボードで入力してください。", true); }
+    else if (e.error === "audio-capture") { L.on = false; note("マイクを使えません。ほかのアプリがマイクを使っていないか確認してください。", true); }
+  };
+  r.onend = () => { L.running = false; L.rec = null; micUI(); if (L.on) setTimeout(startListen, 300); };
+  try { r.start(); L.rec = r; L.running = true; } catch { L.running = false; }
+  micUI();
+}
+function pauseListen(){ clearTimeout(L.timer); if (L.rec) { try { L.rec.abort(); } catch {} } }
+function stopListen(){ L.on = false; pauseListen(); micUI(); }
+$("#mic-btn").onclick = () => {
+  if (L.on) { stopListen(); return; }
+  L.on = true; hush(); startListen();
+};
+
+/* ---------- recording ---------- */
+function pickMime(withAudio){
+  if (!window.MediaRecorder) return null;
+  const list = withAudio ? ["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm","video/mp4;codecs=avc1,mp4a","video/mp4"] : ["video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm","video/mp4"];
+  for (const m of list) { try { if (MediaRecorder.isTypeSupported(m)) return m; } catch {} }
+  return null;
+}
+function startRecording(ses){
+  const audio = S.media ? S.media.getAudioTracks() : [];
+  const mime = pickMime(audio.length > 0);
+  if (!mime || !cv.captureStream) { note("このブラウザでは録画できないため、動画なしで記録します。"); return; }
+  try {
+    const vs = cv.captureStream(15);
+    const stream = new MediaStream([...vs.getVideoTracks(), ...audio]);
+    const rec = new MediaRecorder(stream, { mimeType:mime, videoBitsPerSecond:1000000, audioBitsPerSecond:64000 });
+    ses.chunks = []; ses.mime = mime.split(";")[0]; ses.hasAudio = audio.length > 0;
+    rec.ondataavailable = e => { if (e.data && e.data.size) ses.chunks.push(e.data); };
+    rec.start(1000); ses.recorder = rec; ses.recording = true;
+  } catch { note("録画を開始できなかったため、動画なしで記録します。"); }
+}
+function stopRecording(ses){
+  return new Promise(res => {
+    const r = ses.recorder;
+    if (!r || r.state === "inactive") { ses.recording = false; return res(null); }
+    r.onstop = () => { ses.recording = false; res(new Blob(ses.chunks, { type: ses.mime })); };
+    try { r.stop(); } catch { ses.recording = false; res(null); }
+  });
+}
+let recTimer = 0;
+function tickRec(){
+  const ses = S.ses, el = $("#rec");
+  if (ses && ses.recording) { el.classList.remove("off"); $("#rec-t").textContent = "録画中 " + fmtTime((Date.now()-ses.startedAt)/1000) + (ses.hasAudio ? "（音声あり）" : "（音声なし）"); }
+  else { el.classList.add("off"); $("#rec-t").textContent = ses && ses.state==="ended" ? "録画終了" : "録画なし"; }
+}
+
+/* ---------- AI (Claude API) ---------- */
+async function claude({ system, messages, maxTokens, onText }){
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{ "content-type":"application/json", "x-api-key":S.ses.key, "anthropic-version":"2023-06-01", "anthropic-dangerous-direct-browser-access":"true" },
+    body: JSON.stringify({ model:S.ses.model, max_tokens:maxTokens, system, messages, stream: !!onText })
+  });
+  if (!res.ok) {
+    let msg = "HTTP " + res.status; try { const j = await res.json(); msg = (j.error && j.error.message) || msg; } catch {}
+    const err = new Error(msg); err.status = res.status; throw err;
+  }
+  if (!onText) { const j = await res.json(); return (j.content || []).filter(b => b.type === "text").map(b => b.text).join(""); }
+  const rd = res.body.getReader(), dec = new TextDecoder(); let buf = "", text = "";
+  for (;;) {
+    const { done, value } = await rd.read(); if (done) break;
+    buf += dec.decode(value, { stream:true }); let i;
+    while ((i = buf.indexOf("\n")) >= 0) {
+      const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
+      if (!line.startsWith("data:")) continue;
+      let ev; try { ev = JSON.parse(line.slice(5)); } catch { continue; }
+      if (ev.type === "content_block_delta" && ev.delta && ev.delta.type === "text_delta") { text += ev.delta.text; onText(text); }
+      else if (ev.type === "error") throw new Error((ev.error && ev.error.message) || "stream error");
+    }
+  }
+  return text;
+}
+
+/* ---------- interview ---------- */
+function note(msg, warn){ const n = $("#iv-note"); n.hidden = false; n.textContent = msg; n.classList.toggle("warn", !!warn); }
+function renderSteps(){ $("#steps").innerHTML = PHASES.map((p,i) => `<div class="${i<AV.phase?"done":i===AV.phase?"now":""}">${i+1}. ${p}</div>`).join(""); }
+function addMsg(role, text, typing){
+  const d = document.createElement("div"); d.className = "msg " + role + (typing?" typing":"");
+  d.innerHTML = `<span class="who">${role==="coach"?"コーチ あかり":"あなた"}</span><span class="t"></span>`;
+  d.querySelector(".t").textContent = text; $("#log").append(d); $("#log").scrollTop = 1e9; return d;
+}
+function setBusy(b){ S.ses.busy = b; $("#send-btn").disabled = b; }
+const tsec = () => (Date.now() - S.ses.startedAt) / 1000;
+
+function startInterview(info){
+  const ses = S.ses = { ...info, transcript:[], state:"live", startedAt:Date.now(), demo:!info.key, coachTurns:0, recording:false };
+  AV.phase = 0; AV.coachLine = ""; AV.learnerLine = "";
+  $("#log").innerHTML = ""; $("#iv-note").hidden = true; $("#answer").value = "";
+  $("#iv-voice").checked = info.voice; $("#iv-voice").disabled = !hasTTS;
+  $("#end-btn").textContent = "面談を終了"; $("#end-btn").className = "btn ghost";
+  L.on = ses.useMic; micUI();
+  show("interview"); renderSteps(); startLoop(); startRecording(ses);
+  clearInterval(recTimer); recTimer = setInterval(tickRec, 500); tickRec();
+  if (ses.demo) note("APIキーが未設定のため、決まった質問で進むデモ面談です。録画・音声認識・PDF作成はそのまま試せます。");
+  coachTurn();
+}
+function systemPrompt(s){
+  return `あなたは企業研修の受講後面談を担当するAIコーチ「あかり」です。受講者と1対1で音声で対話し、研修の振り返りから始めて、学びを実際の仕事に生かす具体的な行動目標を受講者自身に設定してもらいます。
+
+# 研修情報
+- 研修名: ${s.trainingTitle}
+- 研修日: ${s.trainingDate}
+- 受講者: ${s.learnerName}${s.dept ? "（"+s.dept+"）" : ""}
+- 研修の内容・要点: ${s.notes || "（未記入。受講者から聞き取ること）"}
+
+# 進め方（5つのフェーズを順に進める）
+1. 振り返り：研修全体で印象に残ったこと、率直な感想
+2. 学び・気づき：具体的に何を学んだか、なぜそれが大事だと感じたか
+3. 仕事への適用：自分の業務のどの場面・相手・課題に当てはまるか
+4. 行動目標：「何を・どの場面で・いつまでに・どうなったら達成か（測り方）」まで具体化する
+5. まとめ：決めた目標を短く復唱して確認し、励ましの言葉で締めくくる
+
+# ルール
+- 受講者の回答は音声認識の結果なので、誤変換があっても文脈から意味をくみ取る。
+- 質問は1回に1つだけ。1回の発言は120字以内の自然な話し言葉（です・ます調）。
+- 受講者の答えを短く受け止めて（言い換え・承認）から次の質問をする。
+- 答えが抽象的なら、具体的な場面・相手・数値を尋ねて深掘りする。答えを代わりに考えて押し付けない。
+- 行動目標は受講者の言葉で決める。期限と測り方が無ければ必ず確認する。
+- 全体で8〜12往復を目安に進める。
+- 見出し・箇条書き・絵文字・記号の装飾は使わない（音声で読み上げるため）。
+- 各発言の最後に、その発言のフェーズ番号を [[PHASE:番号]] の形で必ず付ける。
+- フェーズ5で締めくくりの挨拶をしたら、最後に [[END]] を付ける。`;
+}
+function demoLine(i, s){
+  const D = [
+    [1, `${s.learnerName}さん、研修お疲れさまでした。コーチのあかりです。今日は「${s.trainingTitle}」の振り返りをご一緒します。まず、研修全体で一番印象に残ったことは何でしたか？`],
+    [2, "ありがとうございます。そこから、具体的にどんな学びや気づきがありましたか？"],
+    [2, "その気づきが大切だと感じたのは、なぜでしょうか？"],
+    [3, "では、その学びは普段のお仕事のどんな場面で生かせそうですか？相手や状況も含めて教えてください。"],
+    [4, "いいですね。それを行動目標にしましょう。何を、いつまでに、どのように取り組みますか？"],
+    [4, "達成できたかどうかは、どうやって確かめますか？回数や期限など、測り方を決めておきましょう。"],
+    [5, "とても具体的な目標になりました。まずは今週中に最初の一歩を踏み出してみてください。今日はお疲れさまでした。"]
+  ];
+  const [p, t] = D[Math.min(i, D.length-1)];
+  return `${t}[[PHASE:${p}]]` + (i >= D.length-1 ? "[[END]]" : "");
+}
+const clean = t => t.replace(/\[\[[^\]]*\]\]?/g, "").replace(/\[\[?[A-Z:0-9]*$/,"").trim();
+
+async function coachTurn(){
+  const ses = S.ses; setBusy(true); pauseListen();
+  const bubble = addMsg("coach", "", true);
+  let raw = "";
+  try {
+    if (ses.demo) { raw = demoLine(ses.coachTurns, ses); await new Promise(r => setTimeout(r, 600)); }
+    else {
+      const messages = [{ role:"user", content:"（面談を開始してください。挨拶と最初の質問をどうぞ。）" }];
+      ses.transcript.forEach(m => messages.push({ role: m.role==="coach" ? "assistant" : "user", content: m.role==="coach" ? m.raw : m.text }));
+      raw = await claude({ system: systemPrompt(ses), messages, maxTokens: 400, onText: text => {
+        const c = clean(text); bubble.querySelector(".t").textContent = c; AV.coachLine = c; $("#log").scrollTop = 1e9;
+      }});
+    }
+  } catch (e) {
+    bubble.remove();
+    if (e.status === 401 || e.status === 403) { ses.demo = true; note("APIキーが正しくないため、デモ面談に切り替えました。", true); return coachTurn(); }
+    if (e.status === 404 || e.status === 400) { ses.demo = true; note("AIの設定（モデル名など）に誤りがあるため、デモ面談に切り替えました：" + e.message, true); return coachTurn(); }
+    note(e.status === 429 || e.status === 529 ? "AIが混み合っています。少し待ってから「送信」を押してください。" : "AIの応答を受け取れませんでした。「送信」を押すともう一度試します。（" + e.message + "）", true);
+    ses.retryPending = true; setBusy(false); return;
+  }
+  ses.retryPending = false;
+  const m = raw.match(/\[\[PHASE:(\d)\]\]/g); const ph = m ? +m[m.length-1].replace(/\D/g,"") : AV.phase+1;
+  const ended = /\[\[END\]\]/.test(raw), text = clean(raw);
+  bubble.classList.remove("typing"); bubble.querySelector(".t").textContent = text;
+  AV.coachLine = text; AV.learnerLine = ""; AV.phase = Math.max(AV.phase, Math.min(4, ph-1)); renderSteps();
+  ses.transcript.push({ role:"coach", text, raw, t: tsec(), phase: ph });
+  ses.coachTurns++;
+  setBusy(false);
+  if (ended) { finishPrompt(); speak(text); return; }
+  speak(text, () => startListen());
+  if (!L.on) $("#answer").focus();
+}
+function finishPrompt(){
+  S.ses.closing = true; AV.phase = 4; renderSteps(); stopListen();
+  $("#end-btn").textContent = "まとめを作成する"; $("#end-btn").className = "btn go";
+  note("面談は以上です。「まとめを作成する」を押すと録画を止めて、振り返りレポートを作成します。");
+}
+$("#answer").addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); $("#composer").requestSubmit(); }
+});
+$("#answer").addEventListener("input", () => { AV.learnerLine = $("#answer").value; });
+$("#composer").addEventListener("submit", e => {
+  e.preventDefault();
+  const ses = S.ses; if (!ses || ses.busy || ses.state !== "live") return;
+  if (ses.retryPending) { $("#iv-note").hidden = true; return coachTurn(); }
+  const v = $("#answer").value.trim(); if (!v) return;
+  pauseListen(); $("#answer").value = ""; $("#iv-note").hidden = true;
+  addMsg("learner", v); AV.learnerLine = v;
+  ses.transcript.push({ role:"learner", text:v, t: tsec() });
+  hush(); coachTurn();
+});
+$("#end-btn").onclick = async () => {
+  const ses = S.ses; if (!ses || ses.state !== "live") return;
+  const learnerTurns = ses.transcript.filter(m => m.role==="learner").length;
+  if (!ses.closing && !ses.confirmEnd) {
+    ses.confirmEnd = true;
+    $("#end-btn").textContent = learnerTurns ? "終了してまとめる" : "面談を中止する"; $("#end-btn").className = "btn danger";
+    note(learnerTurns ? "目標設定の途中です。ここで終了する場合は、もう一度ボタンを押してください。" : "まだ回答がありません。中止する場合はもう一度押してください。", true);
+    setTimeout(() => { if (ses.state==="live" && !ses.closing) { ses.confirmEnd=false; $("#end-btn").textContent="面談を終了"; $("#end-btn").className="btn ghost"; } }, 6000);
+    return;
+  }
+  ses.state = "ended"; ses.durationSec = tsec();
+  stopListen(); hush();
+  ses.video = await stopRecording(ses); stopLoop(); tickRec(); clearInterval(recTimer);
+  releaseMedia();
+  if (!learnerTurns) { S.ses = null; show("list"); loadRecords(); toast("面談を中止しました"); return; }
+  buildSummary();
+};
+
+/* ---------- summary ---------- */
+const transcriptText = tr => tr.map(m => `[${fmtTime(m.t)}] ${m.role==="coach"?"コーチ":"受講者"}：${m.text}`).join("\n");
+function parseJSON(t){ const a = t.indexOf("{"), b = t.lastIndexOf("}"); if (a < 0 || b < a) throw new Error("no json"); return JSON.parse(t.slice(a, b+1)); }
+async function buildSummary(){
+  const ses = S.ses; show("review");
+  $("#review-doc").innerHTML = `<div class="loading">面談の内容から振り返りレポートを作成しています</div>`;
+  let sum = null;
+  if (!ses.demo) {
+    try {
+      const txt = await claude({ maxTokens: 1500, system: "あなたは研修の学習記録を作成するアシスタントです。指定のJSONだけを返します。", messages: [{ role:"user", content:
+`次は研修受講後のAIコーチ面談の記録です。受講者本人の発言に基づいて、学習記録用の振り返りレポートを作成してください。受講者が言っていないことは足さないでください。受講者の発言は音声認識の結果なので、明らかな誤変換は正しい語に直してください。
+
+研修名: ${ses.trainingTitle}
+研修日: ${ses.trainingDate}
+受講者: ${ses.learnerName}${ses.dept?"（"+ses.dept+"）":""}
+研修の要点メモ: ${ses.notes||"なし"}
+
+# 面談記録
+${transcriptText(ses.transcript)}
+
+# 出力
+次の形のJSONオブジェクトだけを返してください。文章は受講者を主語にした簡潔な日本語（である調）。
+{"overview":"研修の振り返り（印象・感想）を2〜3文","learnings":["学び・気づき（1項目1文、2〜4項目）"],"application":"仕事への生かし方（場面・相手・課題）を2〜3文","goals":[{"goal":"行動目標（1文）","action":"具体的な行動","deadline":"期限（言及がなければ「未設定」）","metric":"達成の測り方（言及がなければ「未設定」）"}],"coachComment":"コーチからの励ましと次の一歩への助言を2文","keywords":["キーワード3〜5個"]}` }]});
+      sum = parseJSON(txt);
+    } catch { sum = null; }
+  }
+  if (!sum || typeof sum !== "object") sum = fallbackSummary(ses);
+  sum.overview = String(sum.overview || ""); sum.application = String(sum.application || ""); sum.coachComment = String(sum.coachComment || "");
+  sum.learnings = Array.isArray(sum.learnings) ? sum.learnings.map(String) : [];
+  sum.goals = Array.isArray(sum.goals) ? sum.goals.map(g => ({ goal:String(g.goal||""), action:String(g.action||""), deadline:String(g.deadline||"未設定"), metric:String(g.metric||"未設定") })) : [];
+  sum.keywords = Array.isArray(sum.keywords) ? sum.keywords.map(String) : [];
+  ses.summary = sum;
+  renderReview();
+}
+function fallbackSummary(ses){
+  const a = ses.transcript.filter(m => m.role==="learner").map(m => m.text);
+  return { overview: a[0]||"", learnings: [a[1],a[2]].filter(Boolean), application: a[3]||"",
+    goals: a[4] ? [{ goal:a[4], action:a[4], deadline:"未設定", metric:a[5]||"未設定" }] : [],
+    coachComment: "研修で得た気づきを、自分の業務の具体的な場面に結びつけることができた。まずは小さく始め、1週間後に振り返りの時間を取ろう。", keywords: [] };
+}
+function sumSections(sum, editable){
+  const ce = k => editable ? ` contenteditable="true" data-k="${k}"` : "";
+  return `
+  <div class="sec"><h2>研修の振り返り</h2><p${ce("overview")}>${esc(sum.overview)}</p></div>
+  <div class="sec"><h2>学び・気づき</h2><ul>${sum.learnings.map((l,i)=>`<li${ce("learnings."+i)}>${esc(l)}</li>`).join("")}</ul></div>
+  <div class="sec"><h2>仕事への生かし方</h2><p${ce("application")}>${esc(sum.application)}</p></div>
+  <div class="sec"><h2>行動目標</h2><div class="goals">${sum.goals.length ? sum.goals.map((g,i)=>`<div class="goalc">
+      <div class="g"${ce(`goals.${i}.goal`)}>${esc(g.goal)}</div>
+      <dl><dt>具体的な行動</dt><dd${ce(`goals.${i}.action`)}>${esc(g.action)}</dd><dt>期限</dt><dd${ce(`goals.${i}.deadline`)}>${esc(g.deadline)}</dd><dt>測り方</dt><dd${ce(`goals.${i}.metric`)}>${esc(g.metric)}</dd></dl>
+    </div>`).join("") : `<p class="sub">面談で行動目標が設定されませんでした。</p>`}</div></div>
+  <div class="sec"><h2>コーチからのコメント</h2><p${ce("coachComment")}>${esc(sum.coachComment)}</p>
+    ${sum.keywords.length ? `<div class="tags" style="margin-top:10px">${sum.keywords.map(k=>`<span>${esc(k)}</span>`).join("")}</div>`:""}</div>`;
+}
+function headBlock(r){
+  return `<div class="doc-head"><div><p class="sub" style="margin:0 0 2px">研修振り返りレポート</p><h1>${esc(r.trainingTitle)}</h1></div>
+    <dl class="kv"><dt>受講者</dt><dd>${esc(r.learnerName)}${r.dept?"（"+esc(r.dept)+"）":""}</dd><dt>研修日</dt><dd>${esc(r.trainingDate)}</dd><dt>面談</dt><dd>${esc(fmtDate(r.startedAt))}・${esc(fmtTime(r.durationSec))}</dd></dl></div>`;
+}
+function renderReview(){
+  const ses = S.ses, doc = $("#review-doc");
+  const vMB = ses.video ? (ses.video.size/1048576).toFixed(1) : null;
+  doc.innerHTML = headBlock(ses) + `
+    <p class="notice">内容を確認してください。文章をクリックすると直接修正できます。保存すると動画とPDFが学習記録に追加されます。${vMB ? `（録画 ${vMB} MB${ses.hasAudio?"・音声あり":""}）` : "（録画なし）"}</p>
+    ${sumSections(ses.summary, true)}
+    <ul class="progress" id="save-progress" hidden></ul>
+    <div class="actions" style="margin-top:18px">
+      <button class="btn go" type="button" id="save-btn">保存して学習記録に追加</button>
+      <button class="btn ghost" type="button" id="discard-btn">保存せずに破棄</button>
+    </div>`;
+  $("#save-btn").onclick = saveRecord;
+  $("#discard-btn").onclick = () => {
+    const b = $("#discard-btn");
+    if (b.dataset.armed) { S.ses = null; show("list"); loadRecords(); toast("面談の内容を破棄しました"); return; }
+    b.dataset.armed = "1"; b.textContent = "本当に破棄する"; b.className = "btn danger";
+  };
+}
+function collectEdits(){
+  const sum = S.ses.summary;
+  document.querySelectorAll("#review-doc [data-k]").forEach(el => {
+    const path = el.dataset.k.split("."); let o = sum;
+    for (let i=0;i<path.length-1;i++) o = o[path[i]];
+    o[path[path.length-1]] = el.textContent.trim();
+  });
+}
+
+/* ---------- PDF ---------- */
+function reportHTML(r){
+  const s = r.summary, blk = h => `<div class="blk">${h}</div>`;
+  return `<div class="rp">
+    <div class="blk title"><small>LEARNING RECORD ／ 研修振り返りレポート</small><h1>${esc(r.trainingTitle)}</h1></div>
+    ${blk(`<table class="info"><tr><td>受講者</td><td>${esc(r.learnerName)}</td><td>所属</td><td>${esc(r.dept||"—")}</td></tr>
+      <tr><td>研修日</td><td>${esc(r.trainingDate)}</td><td>面談日時</td><td>${esc(fmtDate(r.startedAt))}（${esc(fmtTime(r.durationSec))}）</td></tr></table>`)}
+    ${blk(`<h2>1. 研修の振り返り</h2>`)}${blk(`<p style="margin:0">${esc(s.overview)}</p>`)}
+    ${blk(`<h2>2. 学び・気づき</h2>`)}${s.learnings.map(l=>blk(`<ul><li>${esc(l)}</li></ul>`)).join("")}
+    ${blk(`<h2>3. 仕事への生かし方</h2>`)}${blk(`<p style="margin:0">${esc(s.application)}</p>`)}
+    ${blk(`<h2>4. 行動目標</h2>`)}${s.goals.length ? s.goals.map((g,i)=>blk(`<div class="goalbox"><b>目標${i+1}：${esc(g.goal)}</b><table>
+      <tr><td>具体的な行動</td><td>${esc(g.action)}</td></tr><tr><td>期限</td><td>${esc(g.deadline)}</td></tr><tr><td>測り方</td><td>${esc(g.metric)}</td></tr></table></div>`)).join("") : blk("<p>設定なし</p>")}
+    ${blk(`<h2>5. コーチからのコメント</h2>`)}${blk(`<p style="margin:0">${esc(s.coachComment)}</p>`)}
+    ${blk(`<div class="sign"><div>本人</div><div>上長</div><div>人事</div></div>`)}
+    ${blk(`<h2>付録：面談記録</h2>`)}
+    ${r.transcript.map(m=>blk(`<div class="trl"><span>${fmtTime(m.t)}</span><span>${m.role==="coach"?"コーチ":"受講者"}</span><span>${esc(m.text)}</span></div>`)).join("")}
+  </div>`;
+}
+async function makePdf(r){
+  if (!window.html2canvas || !window.jspdf) throw new Error("PDF作成ライブラリを読み込めませんでした（インターネット接続を確認してください）");
+  const host = $("#report-host"); host.innerHTML = reportHTML(r);
+  if (document.fonts) await document.fonts.ready;
+  const PH = 1123, TOP = 48, BOTTOM = 56;
+  for (const b of host.querySelectorAll(".blk")) {
+    const top = b.offsetTop, h = b.offsetHeight, page = Math.floor(top / PH);
+    if (top + h > (page+1)*PH - BOTTOM && h < PH - TOP - BOTTOM) { const sp = document.createElement("div"); sp.style.height = ((page+1)*PH + TOP - top) + "px"; b.before(sp); }
+  }
+  const rp = host.firstElementChild; const pages = Math.max(1, Math.ceil(rp.offsetHeight / PH));
+  rp.style.height = pages*PH + "px";
+  const canvas = await html2canvas(rp, { scale:2, backgroundColor:"#ffffff", logging:false, windowWidth:794 });
+  const pdf = new window.jspdf.jsPDF({ unit:"pt", format:"a4", orientation:"portrait" });
+  const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
+  const slice = document.createElement("canvas"); const sh = canvas.height / pages;
+  slice.width = canvas.width; slice.height = sh; const sctx = slice.getContext("2d");
+  for (let i=0;i<pages;i++){
+    sctx.fillStyle="#fff"; sctx.fillRect(0,0,slice.width,sh);
+    sctx.drawImage(canvas, 0, i*sh, canvas.width, sh, 0, 0, canvas.width, sh);
+    if (i) pdf.addPage();
+    pdf.addImage(slice.toDataURL("image/jpeg", 0.88), "JPEG", 0, 0, pw, ph);
+    pdf.setFontSize(8); pdf.setTextColor(120); pdf.text(`${i+1} / ${pages}`, pw/2, ph-18, { align:"center" });
+  }
+  host.innerHTML = "";
+  return pdf.output("blob");
+}
+
+/* ---------- save ---------- */
+async function saveRecord(){
+  collectEdits();
+  const ses = S.ses; $("#save-btn").disabled = true; $("#discard-btn").disabled = true;
+  const prog = $("#save-progress"); prog.hidden = false;
+  const steps = { pdf:"PDFを作成", db:"動画とPDFを学習記録に保存" };
+  prog.innerHTML = Object.entries(steps).map(([k,v]) => `<li data-s="${k}">${v}</li>`).join("");
+  const mark = (k, cls, txt) => { const li = prog.querySelector(`[data-s="${k}"]`); li.className = cls; if (txt) li.textContent = steps[k] + " — " + txt; };
+  const rec = { id: uid(), trainingTitle:ses.trainingTitle, trainingDate:ses.trainingDate, learnerName:ses.learnerName, dept:ses.dept, notes:ses.notes,
+    startedAt:ses.startedAt, durationSec:Math.round(ses.durationSec),
+    transcript:ses.transcript.map(({role,text,t,phase}) => ({role,text,t:Math.round(t),phase:phase||null})),
+    summary:ses.summary, demo:!!ses.demo, video: ses.video || null, videoMime: ses.mime || null, hasAudio: !!ses.hasAudio, pdf:null };
+  mark("pdf","run"); try { rec.pdf = await makePdf(rec); mark("pdf","ok"); } catch (e) { mark("pdf","skip", e.message || "失敗"); }
+  mark("db","run");
+  try {
+    rec.createdAt = Date.now();
+    try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch {}
+    await DB.put(rec);
+    mark("db","ok"); S.ses = null; toast("学習記録に保存しました");
+    await loadRecords();
+    setTimeout(() => { S.detailId = rec.id; show("detail"); renderDetail(rec.id); }, 500);
+  } catch (e) {
+    mark("db","skip", (e && e.message) || "失敗");
+    $("#save-btn").disabled = false; $("#save-btn").textContent = "もう一度保存する"; $("#discard-btn").disabled = false;
+    const box = document.createElement("div"); box.className = "actions"; box.style.marginTop = "10px";
+    box.innerHTML = `<span class="hint">保存できない場合は、ファイルとして手元に残せます。</span>`;
+    if (rec.pdf) box.append(dlLink(rec.pdf, fileBase(rec)+".pdf", "PDFをダウンロード"));
+    if (rec.video) box.append(dlLink(rec.video, fileBase(rec)+extOf(rec), "動画をダウンロード"));
+    $("#review-doc").append(box);
+  }
+}
+const fileBase = r => `振り返り_${r.trainingDate}_${(r.learnerName||"").replace(/\s+/g,"")}_${(r.trainingTitle||"").slice(0,20)}`.replace(/[\\/:*?"<>|]/g,"");
+const extOf = r => (r.videoMime||"").includes("mp4") ? ".mp4" : ".webm";
+function dlLink(blob, name, label){
+  const u = URL.createObjectURL(blob); S.urls.push(u);
+  const a = document.createElement("a"); a.className = "btn"; a.href = u; a.download = name; a.textContent = label; return a;
+}
+
+/* ---------- detail ---------- */
+function renderDetail(id){
+  const r = S.records.find(x => x.id === id), doc = $("#detail-doc");
+  if (!r) { doc.innerHTML = `<p class="sub">この記録は見つかりませんでした。</p><button class="btn" type="button" id="back1">一覧に戻る</button>`; $("#back1").onclick = () => show("list"); return; }
+  let vurl = ""; if (r.video) { vurl = URL.createObjectURL(r.video); S.urls.push(vurl); }
+  doc.innerHTML = `<button class="btn ghost" type="button" id="back2" style="margin-bottom:14px">← 学習記録に戻る</button>` + headBlock(r) + `
+    <div class="sec">
+      <h2>面談の録画${r.video ? `<span class="sub" style="font-family:var(--f-body);font-weight:400"> ${(r.video.size/1048576).toFixed(1)} MB・${r.hasAudio?"音声あり":"音声なし"}</span>` : ""}</h2>
+      ${r.video ? `<video class="play" controls preload="metadata" src="${vurl}"></video>` : `<p class="sub">この面談の録画はありません。</p>`}
+      <div class="actions" style="margin-top:12px" id="dl-row"></div>
+    </div>
+    ${r.summary ? sumSections(r.summary, false) : ""}
+    <div class="sec"><details class="tr"><summary>面談記録（${(r.transcript||[]).length}件の発言）</summary>
+      <div style="margin-top:8px">${(r.transcript||[]).map(m=>`<div class="tr-line"><time>${fmtTime(m.t)}</time><b style="color:var(${m.role==="coach"?"--ai":"--accent"})">${m.role==="coach"?"コーチ":"受講者"}</b><span>${esc(m.text)}</span></div>`).join("")}</div>
+    </details></div>
+    <div class="actions" style="margin-top:14px"><button class="btn danger" type="button" id="d-del">この記録を削除</button></div>`;
+  // MediaRecorder's WebM has no duration in its header; seek to the end once so the seek bar works
+  const pv = doc.querySelector("video.play");
+  if (pv) pv.addEventListener("loadedmetadata", () => {
+    if (pv.duration !== Infinity && !isNaN(pv.duration)) return;
+    const back = () => { pv.removeEventListener("timeupdate", back); pv.currentTime = 0; };
+    pv.addEventListener("timeupdate", back); pv.currentTime = 1e101;
+  }, { once:true });
+  const row = $("#dl-row");
+  if (r.pdf) row.append(dlLink(r.pdf, fileBase(r)+".pdf", "PDFをダウンロード"));
+  if (r.video) row.append(dlLink(r.video, fileBase(r)+extOf(r), "動画をダウンロード"));
+  if (r.pdf) { const u = URL.createObjectURL(r.pdf); S.urls.push(u); const a = document.createElement("a"); a.className = "btn ghost"; a.href = u; a.target = "_blank"; a.rel = "noopener"; a.textContent = "PDFを開く"; row.append(a); }
+  $("#back2").onclick = () => { show("list"); renderList(); };
+  const del = $("#d-del");
+  del.onclick = async () => {
+    if (!del.dataset.armed) { del.dataset.armed = "1"; del.textContent = "動画・PDFごと完全に削除する"; return; }
+    del.disabled = true;
+    try { await DB.del(id); toast("記録を削除しました"); show("list"); loadRecords(); }
+    catch (e) { del.disabled = false; toast("削除できませんでした：" + ((e && e.message) || "")); }
+  };
+}
+
+window.addEventListener("beforeunload", e => { if (S.ses && (S.ses.state === "live" || S.ses.summary)) { e.preventDefault(); e.returnValue = ""; } });
+loadRecords();
+})();
+</script>
+</body>
+</html>
