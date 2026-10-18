@@ -314,7 +314,7 @@ const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString
 const ls = { get(k){ try { return localStorage.getItem(k); } catch { return null; } }, set(k,v){ try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k,v); } catch {} } };
 
 const S = { records:[], ses:null, media:null, audioCtx:null, analyser:null, urls:[], detailId:null };
-const L = { on:false, running:false, rec:null, base:"", timer:0 };
+const L = { on:false, running:false, accept:false, rec:null, base:"", timer:0, from:0, len:0 };
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const hasTTS = "speechSynthesis" in window;
 
@@ -560,7 +560,7 @@ function drawStage(t){
   drawCam(PX+10, 338, 208, 156);
   const TX = PX+232, TW = PW-248;
   cx.fillStyle="#8fe0bb"; cx.font="700 13px 'Noto Sans JP',sans-serif"; cx.fillText(ses ? ses.learnerName+" さん" : "受講者", TX, 356);
-  if (L.running) {
+  if (L.running && L.accept) {
     const lv = micLevel();
     cx.fillStyle = "#f07264"; cx.beginPath(); cx.arc(TX+TW-92, 351, 4, 0, Math.PI*2); cx.fill();
     cx.fillStyle = "rgba(255,255,255,.75)"; cx.font="500 11px 'Noto Sans JP',sans-serif"; cx.fillText("聞き取り中", TX+TW-84, 355);
@@ -598,36 +598,51 @@ function speak(text, after){
 function hush(){ try { speechSynthesis.cancel(); } catch {} AV.speaking = false; }
 $("#iv-voice").onchange = e => { if (S.ses) S.ses.voice = e.target.checked; if (!e.target.checked) { hush(); startListen(); } };
 
-/* ---------- speech recognition ---------- */
+/* ---------- speech recognition ----------
+   One recognition session stays open for the whole interview. Each new session can make the
+   browser ask for microphone permission again, so we never stop it between questions:
+   while the coach speaks we simply ignore what it hears. */
+const listening = () => L.running && L.accept;
 function micUI(){
   const b = $("#mic-btn"), t = $("#mic-t");
   b.hidden = !(S.ses && S.ses.useMic);
-  b.classList.toggle("listen", L.running); b.classList.toggle("wait", L.on && !L.running);
-  t.textContent = L.running ? "聞き取り中（押すと止めます）" : L.on ? "コーチの発言後に聞き取ります" : "マイクで話す";
+  b.classList.toggle("listen", listening()); b.classList.toggle("wait", L.on && !listening());
+  t.textContent = listening() ? "聞き取り中（押すと止めます）" : L.on ? "コーチの発言後に聞き取ります" : "マイクで話す";
   $("#answer-label").textContent = L.on ? "あなたの回答（話した内容がここに入ります。直してから送信もできます）" : "あなたの回答（Enterで送信／Shift+Enterで改行）";
 }
-function startListen(){
-  if (!L.on || L.running || !SR || !S.ses || S.ses.state !== "live" || S.ses.busy || AV.speaking) { micUI(); return; }
+function ensureRec(){
+  if (L.running || !L.on || !SR || !S.ses || S.ses.state !== "live") return;
   const r = new SR(); r.lang = "ja-JP"; r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
-  const cur = $("#answer").value.trim(); L.base = cur ? cur + " " : "";
+  L.len = 0; L.from = 0;
+  if (L.accept) { const cur = $("#answer").value.trim(); L.base = cur ? cur + " " : ""; }
   r.onresult = e => {
+    L.len = e.results.length;
+    if (!L.accept) return;
     let fin = "", interim = "";
-    for (let i = 0; i < e.results.length; i++) { const tx = e.results[i][0].transcript; if (e.results[i].isFinal) fin += tx; else interim += tx; }
+    for (let i = L.from; i < e.results.length; i++) { const tx = e.results[i][0].transcript; if (e.results[i].isFinal) fin += tx; else interim += tx; }
+    if (!fin && !interim) return;
     const v = L.base + fin + interim; $("#answer").value = v; AV.learnerLine = v;
     clearTimeout(L.timer);
-    if (!interim && fin && $("#auto-send").checked) L.timer = setTimeout(() => { if (L.running && $("#answer").value.trim()) $("#composer").requestSubmit(); }, 1800);
+    if (!interim && fin && $("#auto-send").checked) L.timer = setTimeout(() => { if (listening() && $("#answer").value.trim()) $("#composer").requestSubmit(); }, 1800);
   };
   r.onerror = e => {
     if (e.error === "not-allowed" || e.error === "service-not-allowed") { L.on = false; note("音声認識が許可されませんでした。キーボードで入力してください。", true); }
     else if (e.error === "network") { L.on = false; note("音声認識サービスに接続できません。インターネット接続を確認するか、キーボードで入力してください。", true); }
     else if (e.error === "audio-capture") { L.on = false; note("マイクを使えません。ほかのアプリがマイクを使っていないか確認してください。", true); }
   };
-  r.onend = () => { L.running = false; L.rec = null; micUI(); if (L.on) setTimeout(startListen, 300); };
+  r.onend = () => { L.running = false; L.rec = null; micUI(); if (L.on) setTimeout(ensureRec, 300); };
   try { r.start(); L.rec = r; L.running = true; } catch { L.running = false; }
-  micUI();
 }
-function pauseListen(){ clearTimeout(L.timer); if (L.rec) { try { L.rec.abort(); } catch {} } }
-function stopListen(){ L.on = false; pauseListen(); micUI(); }
+// start taking the learner's answer (the session itself may already be open)
+function startListen(){
+  if (!L.on || !SR || !S.ses || S.ses.state !== "live") { micUI(); return; }
+  if (S.ses.busy || AV.speaking) { L.accept = false; ensureRec(); micUI(); return; }
+  const cur = $("#answer").value.trim(); L.base = cur ? cur + " " : "";
+  L.from = L.len; L.accept = true; ensureRec(); micUI();
+}
+// stop taking the answer but keep the session (and the permission) alive
+function pauseListen(){ clearTimeout(L.timer); L.accept = false; L.from = L.len; micUI(); }
+function stopListen(){ L.on = false; L.accept = false; clearTimeout(L.timer); if (L.rec) { try { L.rec.abort(); } catch {} } micUI(); }
 $("#mic-btn").onclick = () => {
   if (L.on) { stopListen(); return; }
   L.on = true; hush(); startListen();
